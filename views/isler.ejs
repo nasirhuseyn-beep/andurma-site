@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Görülən İşlər — <%= settings.site_name || 'Andurma Kəndi' %></title>
+  <link rel="stylesheet" href="/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="site-logo">
+        <div class="logo-text">
+          <span class="logo-name"><%= settings.site_name || 'Andurma Kəndi' %></span>
+          <span class="logo-tagline">Qəbələ rayonu</span>
+        </div>
+      </a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/">Ana səhifə</a>
+        <a href="/xeberler">Xəbərlər</a>
+        <a href="/isler" class="active">Görülən işlər</a>
+        <a href="/meqaleler">Məqalələr</a>
+        <a href="/koshe">Köşə</a>
+        <a href="/qalereya">Qalereya</a>
+        <a href="/haqqinda">Haqqında</a>
+        <a href="/elaqe">Əlaqə</a>
+      </nav>
+      <button class="mobile-menu-btn" id="mobileMenuBtn"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <section class="page-header page-header-green">
+    <div class="container">
+      <h1>🛠️ Görülən İşlər</h1>
+      <p>Kəndimizdə həyata keçirilən layihələr</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="category-filter">
+        <a href="/isler" class="filter-btn <%= !category ? 'active' : '' %>">Hamısı</a>
+        <a href="/isler/yol" class="filter-btn <%= category === 'yol' ? 'active' : '' %>">🛣️ Yol</a>
+        <a href="/isler/mekteb" class="filter-btn <%= category === 'mekteb' ? 'active' : '' %>">🏫 Məktəb</a>
+        <a href="/isler/su" class="filter-btn <%= category === 'su' ? 'active' : '' %>">💧 Su</a>
+        <a href="/isler/isiq" class="filter-btn <%= category === 'isiq' ? 'active' : '' %>">⚡ İşıq</a>
+      </div>
+
+      <% if (news && news.length > 0) { %>
+        <div class="work-list">
+          <% news.forEach(item => { %>
+            <a href="/xeber/<%= item.id %>" class="work-item">
+              <div class="work-item-icon">
+                <%= item.category === 'yol' ? '🛣️' : 
+                    item.category === 'mekteb' ? '🏫' : 
+                    item.category === 'su' ? '💧' : 
+                    item.category === 'isiq' ? '⚡' : '📌' %>
+              </div>
+              <div class="work-item-content">
+                <h3><%= item.title %></h3>
+                <p><%= item.content.substring(0, 150) %>...</p>
+                <div class="work-item-meta">
+                  <span>📅 <%= new Date(item.created_at).toLocaleDateString('az-AZ') %></span>
+                  <% if (item.location) { %>
+                    <span>📍 <%= item.location %></span>
+                  <% } %>
+                </div>
+              </div>
+            </a>
+          <% }) %>
+        </div>
+      <% } else { %>
+        <p class="empty-message">Bu kateqoriyada iş yoxdur.</p>
+      <% } %>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p><%= settings.footer_text || '© 2026 Andurma Kəndi' %></p>
+        <a href="/admin/login" class="admin-link">Admin girişi</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('mobileMenuBtn')?.addEventListener('click', function() {
+      document.getElementById('mainNav').classList.toggle('active');
+      this.classList.toggle('active');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= user ? 'İstifadəçini redaktə et' : 'Yeni istifadəçi' %> — Admin Panel</title>
+  <link rel="stylesheet" href="/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="admin-wrap">
+    <aside class="admin-sidebar">
+      <div class="admin-brand">🌿 Andurma</div>
+      <a href="/admin">📊 Dashboard</a>
+      <a href="/admin/news">📰 Xəbərlər</a>
+      <a href="/admin/articles">📝 Məqalələr</a>
+      <a href="/admin/koshe">✍️ Köşə</a>
+      <a href="/admin/gallery">📸 Qalereya</a>
+      <a href="/admin/comments">💬 Şərhlər</a>
+      <a href="/admin/messages">📧 Mesajlar</a>
+      <a href="/admin/users" class="active">👥 İstifadəçilər</a>
+      <a href="/admin/settings">⚙️ Sazlamalar</a>
+      <a href="/admin/password">🔒 Şifrə</a>
+      <a href="/" target="_blank">🌐 Sayta bax</a>
+      <a href="/admin/logout">🚪 Çıxış</a>
+    </aside>
+
+    <main class="admin-main">
+      <h1><%= user ? '✏️ İstifadəçini redaktə et' : '➕ Yeni istifadəçi' %></h1>
+
+      <% if (typeof error !== 'undefined' && error) { %>
+        <p class="err">❌ <%= error %></p>
+      <% } %>
+
+      <form method="POST" class="post-form"
+            action="<%= user ? '/admin/users/edit/' + user.id : '/admin/users/new' %>">
+
+        <h3 class="form-section-title">👤 İstifadəçi məlumatları</h3>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Tam adı</label>
+            <input type="text" name="full_name" placeholder="Elvin Hüseynov"
+                   value="<%= user ? (user.full_name || '') : '' %>">
+          </div>
+
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="email" placeholder="elvin@mail.com"
+                   value="<%= user ? (user.email || '') : '' %>">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>İstifadəçi adı *</label>
+            <input type="text" name="username" placeholder="elvin"
+                   value="<%= user ? user.username : '' %>" required>
+          </div>
+
+          <div class="form-group">
+            <label><%= user ? 'Yeni şifrə (boş buraxsanız dəyişməz)' : 'Şifrə *' %></label>
+            <input type="password" name="password" placeholder="••••••••"
+                   <%= user ? '' : 'required' %> minlength="6">
+          </div>
+        </div>
+
+        <h3 class="form-section-title">🔑 Rol və İcazələr</h3>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Rol</label>
+            <select name="role">
+              <option value="editor" <%= user && user.role === 'editor' ? 'selected' : '' %>>✏️ Redaktor</option>
+              <option value="super_admin" <%= user && user.role === 'super_admin' ? 'selected' : '' %>>👑 Super Admin</option>
+            </select>
+          </div>
+
+          <% if (user) { %>
+            <div class="form-group">
+              <label>Status</label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="active" <%= user.active ? 'checked' : '' %>>
+                Aktiv hesab
+              </label>
+            </div>
+          <% } %>
+        </div>
+
+        <div class="form-group">
+          <label>İcazələr (redaktor üçün):</label>
+          <div class="permissions-grid">
+            <label class="checkbox-label">
+              <input type="checkbox" name="can_add_news" 
+                     <%= !user || (user.permissionsObj && user.permissionsObj.can_add_news) ? 'checked' : '' %>>
+              📰 Xəbər əlavə etmə
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="can_add_articles"
+                     <%= !user || (user.permissionsObj && user.permissionsObj.can_add_articles) ? 'checked' : '' %>>
+              📝 Məqalə yazmaq
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="can_add_koshe"
+                     <%= !user || (user.permissionsObj && user.permissionsObj.can_add_koshe) ? 'checked' : '' %>>
+              ✍️ Köşə yazısı
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="can_add_gallery"
+                     <%= !user || (user.permissionsObj && user.permissionsObj.can_add_gallery) ? 'checked' : '' %>>
+              📸 Qalereya
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="can_approve_comments"
+                     <%= user && user.permissionsObj && user.permissionsObj.can_approve_comments ? 'checked' : '' %>>
+              💬 Şərhləri təsdiq
+            </label>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">
+            <%= user ? '💾 Yadda saxla' : '✅ Yarat' %>
+          </button>
+          <a href="/admin/users" class="btn">❌ Ləğv et</a>
+        </div>
+      </form>
+    </main>
+  </div>
+</body>
+</html>

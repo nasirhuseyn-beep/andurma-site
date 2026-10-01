@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Əlaqə — <%= settings.site_name || 'Andurma Kəndi' %></title>
+  <link rel="stylesheet" href="/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="site-logo">
+        <div class="logo-text">
+          <span class="logo-name"><%= settings.site_name || 'Andurma Kəndi' %></span>
+          <span class="logo-tagline">Qəbələ rayonu</span>
+        </div>
+      </a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/">Ana səhifə</a>
+        <a href="/xeberler">Xəbərlər</a>
+        <a href="/isler">Görülən işlər</a>
+        <a href="/meqaleler">Məqalələr</a>
+        <a href="/koshe">Köşə</a>
+        <a href="/qalereya">Qalereya</a>
+        <a href="/haqqinda">Haqqında</a>
+        <a href="/elaqe" class="active">Əlaqə</a>
+      </nav>
+      <button class="mobile-menu-btn" id="mobileMenuBtn"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <section class="page-header page-header-green">
+    <div class="container">
+      <h1>📞 Əlaqə</h1>
+      <p>Bizimlə əlaqə saxlayın</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="contact-grid">
+        <div class="contact-info">
+          <h2>Əlaqə Məlumatları</h2>
+
+          <% if (settings.contact_address) { %>
+            <div class="contact-item">
+              <div class="contact-icon">📍</div>
+              <div>
+                <h4>Ünvan</h4>
+                <p><%= settings.contact_address %></p>
+              </div>
+            </div>
+          <% } %>
+
+          <% if (settings.contact_phone) { %>
+            <div class="contact-item">
+              <div class="contact-icon">📞</div>
+              <div>
+                <h4>Telefon</h4>
+                <p><%= settings.contact_phone %></p>
+              </div>
+            </div>
+          <% } %>
+
+          <% if (settings.contact_email) { %>
+            <div class="contact-item">
+              <div class="contact-icon">📧</div>
+              <div>
+                <h4>Email</h4>
+                <p><%= settings.contact_email %></p>
+              </div>
+            </div>
+          <% } %>
+        </div>
+
+        <div class="contact-form-wrapper">
+          <h2>Mesaj Göndərin</h2>
+
+          <% if (typeof sent !== 'undefined' && sent) { %>
+            <p class="ok">✅ Mesajınız göndərildi! Tezliklə əlaqə saxlayacağıq.</p>
+          <% } %>
+
+          <form method="POST" action="/elaqe" class="contact-form">
+            <input type="text" name="name" placeholder="Adınız *" required>
+            <input type="tel" name="phone" placeholder="Telefon">
+            <input type="email" name="email" placeholder="Email">
+            <textarea name="message" rows="6" placeholder="Mesajınız *" required></textarea>
+            <button type="submit" class="btn btn-primary">Göndər</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p><%= settings.footer_text || '© 2026 Andurma Kəndi' %></p>
+        <a href="/admin/login" class="admin-link">Admin girişi</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('mobileMenuBtn')?.addEventListener('click', function() {
+      document.getElementById('mainNav').classList.toggle('active');
+      this.classList.toggle('active');
+    });
+  </script>
+</body>
+</html>

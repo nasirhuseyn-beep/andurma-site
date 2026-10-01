@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Köşə Yazıları — <%= settings.site_name || 'Andurma Kəndi' %></title>
+  <link rel="stylesheet" href="/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="site-logo">
+        <div class="logo-text">
+          <span class="logo-name"><%= settings.site_name || 'Andurma Kəndi' %></span>
+          <span class="logo-tagline">Qəbələ rayonu</span>
+        </div>
+      </a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/">Ana səhifə</a>
+        <a href="/xeberler">Xəbərlər</a>
+        <a href="/isler">Görülən işlər</a>
+        <a href="/meqaleler">Məqalələr</a>
+        <a href="/koshe" class="active">Köşə</a>
+        <a href="/qalereya">Qalereya</a>
+        <a href="/haqqinda">Haqqında</a>
+        <a href="/elaqe">Əlaqə</a>
+      </nav>
+      <button class="mobile-menu-btn" id="mobileMenuBtn"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <section class="page-header page-header-brown">
+    <div class="container">
+      <h1>✍️ Köşə Yazıları</h1>
+      <p>Fikir və düşüncələr</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <% if (koshe && koshe.length > 0) { %>
+        <div class="articles-grid">
+          <% koshe.forEach(item => { %>
+            <article class="article-card">
+              <a href="/koshe/<%= item.id %>">
+                <% if (item.image) { %>
+                  <img src="<%= item.image %>" alt="<%= item.title %>" class="article-image">
+                <% } else { %>
+                  <div class="article-placeholder">✍️</div>
+                <% } %>
+                <div class="article-content">
+                  <h3><%= item.title %></h3>
+                  <p><%= item.content.substring(0, 150) %>...</p>
+                  <div class="article-meta">
+                    <span>✍️ <%= item.author_name || 'Admin' %></span>
+                    <span>👁️ <%= item.views || 0 %></span>
+                    <span>❤️ <%= item.likes || 0 %></span>
+                  </div>
+                </div>
+              </a>
+            </article>
+          <% }) %>
+        </div>
+      <% } else { %>
+        <p class="empty-message">Hələ köşə yazısı yoxdur.</p>
+      <% } %>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p><%= settings.footer_text || '© 2026 Andurma Kəndi' %></p>
+        <a href="/admin/login" class="admin-link">Admin girişi</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('mobileMenuBtn')?.addEventListener('click', function() {
+      document.getElementById('mainNav').classList.toggle('active');
+      this.classList.toggle('active');
+    });
+  </script>
+</body>
+</html>

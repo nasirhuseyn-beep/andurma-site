@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Haqqında — <%= settings.site_name || 'Andurma Kəndi' %></title>
+  <link rel="stylesheet" href="/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="site-logo">
+        <div class="logo-text">
+          <span class="logo-name"><%= settings.site_name || 'Andurma Kəndi' %></span>
+          <span class="logo-tagline">Qəbələ rayonu</span>
+        </div>
+      </a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/">Ana səhifə</a>
+        <a href="/xeberler">Xəbərlər</a>
+        <a href="/isler">Görülən işlər</a>
+        <a href="/meqaleler">Məqalələr</a>
+        <a href="/koshe">Köşə</a>
+        <a href="/qalereya">Qalereya</a>
+        <a href="/haqqinda" class="active">Haqqında</a>
+        <a href="/elaqe">Əlaqə</a>
+      </nav>
+      <button class="mobile-menu-btn" id="mobileMenuBtn"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <section class="page-header">
+    <div class="container">
+      <h1>ℹ️ Kənd Haqqında</h1>
+      <p>Andurma kəndi haqqında məlumatlar</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container-narrow">
+      <div class="about-content">
+        <h2><%= settings.about_title || 'Kənd Haqqında' %></h2>
+        <div class="about-text">
+          <%= settings.about_text || 'Andurma kəndi Qəbələ rayonunda yerləşir. Kənd öz təbiəti, tarixi və mədəniyyəti ilə seçilir.' %>
+        </div>
+
+        <div class="about-info-grid">
+          <div class="info-card">
+            <div class="info-icon">📍</div>
+            <h3>Yerləşmə</h3>
+            <p>Qəbələ rayonu, Azərbaycan</p>
+          </div>
+          <div class="info-card">
+            <div class="info-icon">👥</div>
+            <h3>Əhali</h3>
+            <p>2,500+ sakin</p>
+          </div>
+          <div class="info-card">
+            <div class="info-icon">🏞️</div>
+            <h3>Sahə</h3>
+            <p>45 km²</p>
+          </div>
+          <div class="info-card">
+            <div class="info-icon">⛰️</div>
+            <h3>Yüksəklik</h3>
+            <p>Dəniz səviyyəsindən 600 m</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p><%= settings.footer_text || '© 2026 Andurma Kəndi' %></p>
+        <a href="/admin/login" class="admin-link">Admin girişi</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('mobileMenuBtn')?.addEventListener('click', function() {
+      document.getElementById('mainNav').classList.toggle('active');
+      this.classList.toggle('active');
+    });
+  </script>
+</body>
+</html>

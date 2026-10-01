@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Səhifə tapılmadı — <%= settings.site_name || 'Andurma Kəndi' %></title>
+  <link rel="stylesheet" href="/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="site-logo">
+        <div class="logo-text">
+          <span class="logo-name"><%= settings.site_name || 'Andurma Kəndi' %></span>
+        </div>
+      </a>
+    </div>
+  </header>
+
+  <section class="error-page">
+    <div class="container">
+      <h1>404</h1>
+      <h2>Səhifə tapılmadı</h2>
+      <p>Axtardığınız səhifə mövcud deyil və ya silinib.</p>
+      <a href="/" class="btn btn-primary">🏠 Ana səhifəyə qayıt</a>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p><%= settings.footer_text || '© 2026 Andurma Kəndi' %></p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Köşə Yazıları — Admin Panel</title>
+  <link rel="stylesheet" href="/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="admin-wrap">
+    <aside class="admin-sidebar">
+      <div class="admin-brand">🌿 Andurma</div>
+      <a href="/admin">📊 Dashboard</a>
+      <a href="/admin/news">📰 Xəbərlər</a>
+      <a href="/admin/articles">📝 Məqalələr</a>
+      <a href="/admin/koshe" class="active">✍️ Köşə</a>
+      <a href="/admin/gallery">📸 Qalereya</a>
+      <a href="/admin/comments">💬 Şərhlər</a>
+      <a href="/admin/messages">📧 Mesajlar</a>
+      <% if (user && user.role === 'super_admin') { %>
+        <a href="/admin/users">👥 İstifadəçilər</a>
+        <a href="/admin/settings">⚙️ Sazlamalar</a>
+      <% } %>
+      <a href="/admin/password">🔒 Şifrə</a>
+      <a href="/" target="_blank">🌐 Sayta bax</a>
+      <a href="/admin/logout">🚪 Çıxış</a>
+    </aside>
+
+    <main class="admin-main">
+      <div class="admin-header">
+        <h1>✍️ Köşə Yazıları</h1>
+        <a href="/admin/koshe/new" class="btn btn-primary">➕ Yeni yazı</a>
+      </div>
+
+      <% if (koshe.length === 0) { %>
+        <p class="empty-message">Hələ köşə yazısı yoxdur.</p>
+      <% } else { %>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Şəkil</th>
+              <th>Başlıq</th>
+              <th>Müəllif</th>
+              <th>👁️</th>
+              <th>❤️</th>
+              <th>Tarix</th>
+              <th>Əməliyyat</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% koshe.forEach(item => { %>
+              <tr>
+                <td>
+                  <% if (item.image) { %>
+                    <img src="<%= item.image %>" class="admin-thumb" alt="">
+                  <% } else { %>
+                    <span class="admin-no-image">✍️</span>
+                  <% } %>
+                </td>
+                <td><strong><%= item.title %></strong></td>
+                <td><small><%= item.author_name || '—' %></small></td>
+                <td><%= item.views || 0 %></td>
+                <td><%= item.likes || 0 %></td>
+                <td><small><%= new Date(item.created_at).toLocaleDateString('az-AZ') %></small></td>
+                <td class="actions">
+                  <a href="/koshe/<%= item.id %>" target="_blank" class="btn btn-sm">👁️</a>
+                  <a href="/admin/koshe/edit/<%= item.id %>" class="btn btn-sm">✏️</a>
+                  <form method="POST" action="/admin/koshe/delete/<%= item.id %>" style="display:inline;">
+                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Silmək istəyirsiniz?');">🗑️</button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } %>
+    </main>
+  </div>
+</body>
+</html>

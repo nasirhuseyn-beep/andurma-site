@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= koshe.title %> — <%= settings.site_name || 'Andurma Kəndi' %></title>
+  <link rel="stylesheet" href="/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="site-logo">
+        <div class="logo-text">
+          <span class="logo-name"><%= settings.site_name || 'Andurma Kəndi' %></span>
+          <span class="logo-tagline">Qəbələ rayonu</span>
+        </div>
+      </a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/">Ana səhifə</a>
+        <a href="/xeberler">Xəbərlər</a>
+        <a href="/isler">Görülən işlər</a>
+        <a href="/meqaleler">Məqalələr</a>
+        <a href="/koshe" class="active">Köşə</a>
+        <a href="/qalereya">Qalereya</a>
+        <a href="/haqqinda">Haqqında</a>
+        <a href="/elaqe">Əlaqə</a>
+      </nav>
+      <button class="mobile-menu-btn" id="mobileMenuBtn"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <article class="single-content">
+    <div class="container-narrow">
+      <nav class="breadcrumb">
+        <a href="/">Ana səhifə</a> / <a href="/koshe">Köşə</a> / <span><%= koshe.title %></span>
+      </nav>
+
+      <h1 class="single-title"><%= koshe.title %></h1>
+
+      <div class="single-meta">
+        <span>📅 <%= new Date(koshe.created_at).toLocaleDateString('az-AZ') %></span>
+        <% if (koshe.author_name) { %>
+          <span>✍️ <%= koshe.author_name %></span>
+        <% } %>
+        <span>👁️ <%= koshe.views || 0 %> baxış</span>
+        <span>❤️ <%= koshe.likes || 0 %> bəyənmə</span>
+      </div>
+
+      <% if (koshe.image) { %>
+        <img src="<%= koshe.image %>" alt="<%= koshe.title %>" class="single-image">
+      <% } %>
+
+      <div class="single-text">
+        <%= koshe.content %>
+      </div>
+
+      <div class="like-section">
+        <button class="like-btn" id="likeBtn" onclick="likeItem('koshe', <%= koshe.id %>)">
+          <span class="like-icon">❤️</span>
+          <span class="like-text">Bəyən</span>
+          <span class="like-count" id="likeCount"><%= koshe.likes || 0 %></span>
+        </button>
+      </div>
+
+      <div class="share-buttons">
+        <span class="share-label">Paylaş:</span>
+        <a href="https://www.facebook.com/sharer/sharer.php?u=https://andurma.site/koshe/<%= koshe.id %>" target="_blank" class="share-btn share-facebook" title="Facebook">f</a>
+        <a href="https://wa.me/?text=<%= koshe.title %> - https://andurma.site/koshe/<%= koshe.id %>" target="_blank" class="share-btn share-whatsapp" title="WhatsApp">💬</a>
+        <a href="https://t.me/share/url?url=https://andurma.site/koshe/<%= koshe.id %>&text=<%= koshe.title %>" target="_blank" class="share-btn share-telegram" title="Telegram">✈️</a>
+        <button onclick="copyLink('https://andurma.site/koshe/<%= koshe.id %>')" class="share-btn share-copy" title="Link kopyala">📋</button>
+      </div>
+    </div>
+
+    <div class="container-narrow">
+      <section class="comments-section">
+        <h3>💬 Şərhlər (<%= comments.length %>)</h3>
+
+        <% if (typeof sent !== 'undefined' && sent) { %>
+          <p class="ok">✅ Şərhiniz göndərildi. Təsdiqdən sonra yayımlanacaq.</p>
+        <% } %>
+
+        <% if (comments.length === 0) { %>
+          <p class="empty-message">Hələ şərh yoxdur.</p>
+        <% } else { %>
+          <% comments.forEach(c => { %>
+            <div class="comment">
+              <div class="comment-head">
+                <strong><%= c.name %></strong>
+                <small><%= new Date(c.created_at).toLocaleDateString('az-AZ') %></small>
+              </div>
+              <p><%= c.text %></p>
+            </div>
+          <% }) %>
+        <% } %>
+
+        <div class="comment-form">
+          <h4>Şərh yaz</h4>
+          <form method="POST" action="/comment/koshe/<%= koshe.id %>">
+            <input type="text" name="name" placeholder="Adınız" required>
+            <textarea name="text" rows="4" placeholder="Şərhinizi yazın..." required></textarea>
+            <button type="submit" class="btn btn-primary">Göndər</button>
+          </form>
+        </div>
+      </section>
+
+      <a href="/koshe" class="back-link">← Bütün köşə yazıları</a>
+    </div>
+  </article>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p><%= settings.footer_text || '© 2026 Andurma Kəndi' %></p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('mobileMenuBtn')?.addEventListener('click', function() {
+      document.getElementById('mainNav').classList.toggle('active');
+      this.classList.toggle('active');
+    });
+
+    function copyLink(url) {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(url).then(() => alert('✅ Link kopyalandı!'));
+      } else {
+        prompt('Link:', url);
+      }
+    }
+
+    function likeItem(type, id) {
+      const btn = document.getElementById('likeBtn');
+      const count = document.getElementById('likeCount');
+      const likedKey = 'liked_' + type + '_' + id;
+      if (localStorage.getItem(likedKey)) { alert('Artıq bəyənmisiniz!'); return; }
+      fetch('/like/' + type + '/' + id, { method: 'POST' })
+        .then(r => r.json())
+        .then(data => {
+          if (data.success) {
+            count.textContent = data.likes;
+            btn.classList.add('liked');
+            btn.querySelector('.like-text').textContent = 'Bəyəndiniz';
+            localStorage.setItem(likedKey, '1');
+          }
+        });
+    }
+
+    const likedKey = 'liked_koshe_<%= koshe.id %>';
+    if (localStorage.getItem(likedKey)) {
+      const btn = document.getElementById('likeBtn');
+      if (btn) {
+        btn.classList.add('liked');
+        btn.querySelector('.like-text').textContent = 'Bəyəndiniz';
+      }
+    }
+  </script>
+</body>
+</html>

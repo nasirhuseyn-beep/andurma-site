@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Şərhlər — Admin Panel</title>
+  <link rel="stylesheet" href="/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="admin-wrap">
+    <aside class="admin-sidebar">
+      <div class="admin-brand">🌿 Andurma</div>
+      <a href="/admin">📊 Dashboard</a>
+      <a href="/admin/news">📰 Xəbərlər</a>
+      <a href="/admin/articles">📝 Məqalələr</a>
+      <a href="/admin/koshe">✍️ Köşə</a>
+      <a href="/admin/gallery">📸 Qalereya</a>
+      <a href="/admin/comments" class="active">💬 Şərhlər</a>
+      <a href="/admin/messages">📧 Mesajlar</a>
+      <% if (user && user.role === 'super_admin') { %>
+        <a href="/admin/users">👥 İstifadəçilər</a>
+        <a href="/admin/settings">⚙️ Sazlamalar</a>
+      <% } %>
+      <a href="/admin/password">🔒 Şifrə</a>
+      <a href="/" target="_blank">🌐 Sayta bax</a>
+      <a href="/admin/logout">🚪 Çıxış</a>
+    </aside>
+
+    <main class="admin-main">
+      <h1>💬 Şərhlər</h1>
+
+      <% if (comments.length === 0) { %>
+        <p class="empty-message">Hələ şərh yoxdur.</p>
+      <% } else { %>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Yazı növü</th>
+              <th>Ad</th>
+              <th>Şərh</th>
+              <th>Tarix</th>
+              <th>Status</th>
+              <th>Əməliyyat</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% comments.forEach(c => { %>
+              <tr class="<%= c.approved ? '' : 'row-pending' %>">
+                <td>
+                  <span class="badge-cat">
+                    <%= c.content_type === 'news' ? '📰 Xəbər' : 
+                        c.content_type === 'article' ? '📝 Məqalə' : 
+                        c.content_type === 'koshe' ? '✍️ Köşə' : '📌' %>
+                  </span>
+                </td>
+                <td><strong><%= c.name %></strong></td>
+                <td class="comment-text"><%= c.text %></td>
+                <td><small><%= new Date(c.created_at).toLocaleDateString('az-AZ') %></small></td>
+                <td>
+                  <% if (c.approved) { %>
+                    <span class="status status-ok">✅ Təsdiq</span>
+                  <% } else { %>
+                    <span class="status status-pending">⏳ Gözləyir</span>
+                  <% } %>
+                </td>
+                <td class="actions">
+                  <% if (!c.approved) { %>
+                    <form method="POST" action="/admin/comments/approve/<%= c.id %>" style="display:inline;">
+                      <button type="submit" class="btn btn-sm btn-success">✅ Təsdiq</button>
+                    </form>
+                  <% } %>
+                  <form method="POST" action="/admin/comments/delete/<%= c.id %>" style="display:inline;">
+                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Silmək?');">🗑️</button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } %>
+    </main>
+  </div>
+</body>
+</html>
