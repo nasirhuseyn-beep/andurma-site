@@ -2,136 +2,86 @@
 <html lang="az">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sayt Sazlamaları — Admin Panel</title>
-  <link rel="stylesheet" href="/style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <title>Sayt Sazlamaları - Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  <div class="admin-wrap">
-    <aside class="admin-sidebar">
-      <div class="admin-brand">🌿 Andurma</div>
-      <a href="/admin">📊 Dashboard</a>
-      <a href="/admin/news">📰 Xəbərlər</a>
-      <a href="/admin/articles">📝 Məqalələr</a>
-      <a href="/admin/koshe">✍️ Köşə</a>
-      <a href="/admin/gallery">📸 Qalereya</a>
-      <a href="/admin/comments">💬 Şərhlər</a>
-      <a href="/admin/messages">📧 Mesajlar</a>
-      <a href="/admin/users">👥 İstifadəçilər</a>
-      <a href="/admin/settings" class="active">⚙️ Sazlamalar</a>
-      <a href="/admin/password">🔒 Şifrə</a>
-      <a href="/" target="_blank">🌐 Sayta bax</a>
-      <a href="/admin/logout">🚪 Çıxış</a>
-    </aside>
-
-    <main class="admin-main">
+<div class="admin-wrap">
+  <aside class="admin-sidebar">
+    <div class="admin-brand">🌿 Andurma</div>
+    <a href="/admin">📊 Dashboard</a>
+    <a href="/admin/news">📰 Xəbərlər</a>
+    <a href="/admin/articles">📝 Məqalələr</a>
+    <a href="/admin/koshe">✍️ Köşə</a>
+    <a href="/admin/gallery">🖼️ Qalereya</a>
+    <a href="/admin/places">🗺️ Görməli Yerlər</a>
+    <a href="/admin/comments">💬 Şərhlər</a>
+    <a href="/admin/messages">📧 Mesajlar</a>
+    <a href="/admin/users">👥 İstifadəçilər</a>
+    <a href="/admin/settings" class="active">⚙️ Sazlamalar</a>
+    <a href="/admin/password">🔒 Şifrə</a>
+    <a href="/" target="_blank">🌐 Sayta bax</a>
+    <a href="/admin/logout">🚪 Çıxış</a>
+  </aside>
+  <main class="admin-main">
+    <div class="admin-header">
       <h1>⚙️ Sayt Sazlamaları</h1>
-
-      <% if (saved) { %>
-        <p class="ok">✅ Dəyişikliklər yadda saxlanıldı!</p>
-      <% } %>
-
-      <form method="POST" enctype="multipart/form-data" class="post-form">
-
-        <h3 class="form-section-title">🏠 Hero (Ana Səhifə)</h3>
-
-        <div class="form-group">
-          <label>Saytın adı</label>
-          <input type="text" name="site_name" value="<%= settings.site_name || '' %>">
-        </div>
-
-        <div class="form-group">
-          <label>Hero başlıq</label>
-          <input type="text" name="hero_title" value="<%= settings.hero_title || '' %>">
-        </div>
-
-        <div class="form-group">
-          <label>Hero alt yazı</label>
-          <input type="text" name="hero_subtitle" value="<%= settings.hero_subtitle || '' %>">
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label>🖼️ Hero fon şəkli</label>
-            <input type="file" name="hero_image" accept="image/*">
-            <% if (settings.hero_image) { %>
-              <div class="current-file">
-                <img src="<%= settings.hero_image %>" style="max-width:200px;">
-                <small>Mövcud fon</small>
-              </div>
-            <% } %>
-          </div>
-          <div class="form-group">
-            <label>🌿 Logo</label>
-            <input type="file" name="logo" accept="image/*">
-            <% if (settings.logo) { %>
-              <div class="current-file">
-                <img src="<%= settings.logo %>" style="max-width:100px;">
-                <small>Mövcud logo</small>
-              </div>
-            <% } %>
-          </div>
-        </div>
-
-        <h3 class="form-section-title">ℹ️ Haqqında</h3>
-
-        <div class="form-group">
-          <label>Başlıq</label>
-          <input type="text" name="about_title" value="<%= settings.about_title || '' %>">
-        </div>
-
-        <div class="form-group">
-          <label>Mətn</label>
-          <textarea name="about_text" rows="6"><%= settings.about_text || '' %></textarea>
-        </div>
-
-        <h3 class="form-section-title">📞 Əlaqə</h3>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label>Telefon</label>
-            <input type="text" name="contact_phone" value="<%= settings.contact_phone || '' %>">
-          </div>
-          <div class="form-group">
-            <label>Email</label>
-            <input type="text" name="contact_email" value="<%= settings.contact_email || '' %>">
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>Ünvan</label>
-          <input type="text" name="contact_address" value="<%= settings.contact_address || '' %>">
-        </div>
-
-        <h3 class="form-section-title">🌐 Sosial Şəbəkələr</h3>
-
-        <div class="form-group">
-          <label>📘 Facebook</label>
-          <input type="text" name="social_facebook" value="<%= settings.social_facebook || '' %>" placeholder="https://facebook.com/...">
-        </div>
-        <div class="form-group">
-          <label>📸 Instagram</label>
-          <input type="text" name="social_instagram" value="<%= settings.social_instagram || '' %>" placeholder="https://instagram.com/...">
-        </div>
-        <div class="form-group">
-          <label>📺 YouTube</label>
-          <input type="text" name="social_youtube" value="<%= settings.social_youtube || '' %>" placeholder="https://youtube.com/...">
-        </div>
-
-        <h3 class="form-section-title">🦶 Footer</h3>
-
-        <div class="form-group">
-          <label>Footer mətni</label>
-          <input type="text" name="footer_text" value="<%= settings.footer_text || '' %>">
-        </div>
-
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary">💾 Yadda saxla</button>
-          <a href="/" target="_blank" class="btn">👁️ Sayta bax</a>
-        </div>
-      </form>
-    </main>
-  </div>
+      <div class="admin-user">
+        <span>👤 <%= user ? user.full_name || user.username : 'Admin' %></span>
+        <span class="user-role role-super"><%= user && user.role === 'super_admin' ? 'Super Admin' : 'Redaktor' %></span>
+      </div>
+    </div>
+    <% if (saved) { %><div class="ok">✅ Sazlamalar uğurla yadda saxlanıldı!</div><% } %>
+    <form method="POST" action="/admin/settings" enctype="multipart/form-data" class="post-form">
+      <h3 class="form-section-title">🏠 Ümumi Məlumatlar</h3>
+      <div class="form-group"><label>Sayt Adı</label><input type="text" name="site_name" value="<%= settings.site_name || '' %>"></div>
+      <div class="form-group"><label>Sayt Alt Başlığı (Tagline)</label><input type="text" name="site_tagline" value="<%= settings.site_tagline || 'QƏBƏLƏ RAYONU' %>"><small style="color: #6c757d; font-size: 12px;">Bu yazı saytın loqosunun altında görünür.</small></div>
+      <h3 class="form-section-title">🖼️ Hero Bölməsi</h3>
+      <div class="form-group"><label>Hero Başlıq</label><input type="text" name="hero_title" value="<%= settings.hero_title || '' %>"></div>
+      <div class="form-group"><label>Hero Alt Başlıq</label><input type="text" name="hero_subtitle" value="<%= settings.hero_subtitle || '' %>"></div>
+      <div class="form-group"><label>Hero Şəkil</label><input type="file" name="hero_image" accept="image/*"><% if (settings.hero_image) { %><div class="current-file"><img src="<%= settings.hero_image %>" alt="Hero"><small>Cari şəkil</small></div><% } %></div>
+      <div class="form-group"><label>Logo</label><input type="file" name="logo" accept="image/*"><% if (settings.logo) { %><div class="current-file"><img src="<%= settings.logo %>" alt="Logo"><small>Cari logo</small></div><% } %></div>
+      <h3 class="form-section-title">📖 Haqqında Bölməsi</h3>
+      <div class="form-group"><label>Haqqında Başlıq</label><input type="text" name="about_title" value="<%= settings.about_title || '' %>"></div>
+      <div class="form-group"><label>Haqqında Mətn</label><textarea name="about_text" rows="6"><%= settings.about_text || '' %></textarea></div>
+      <h3 class="form-section-title">📊 Statistika Bölməsi</h3>
+      <div class="form-row">
+        <div class="form-group"><label>1-ci Statistika - İkon</label><input type="text" name="stat_1_icon" value="<%= settings.stat_1_icon || '👥' %>"></div>
+        <div class="form-group"><label>1-ci Statistika - Rəqəm</label><input type="text" name="stat_1_number" value="<%= settings.stat_1_number || '2,500+' %>"></div>
+        <div class="form-group"><label>1-ci Statistika - Etiket</label><input type="text" name="stat_1_label" value="<%= settings.stat_1_label || 'Sakin' %>"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>2-ci Statistika - İkon</label><input type="text" name="stat_2_icon" value="<%= settings.stat_2_icon || '🏞️' %>"></div>
+        <div class="form-group"><label>2-ci Statistika - Rəqəm</label><input type="text" name="stat_2_number" value="<%= settings.stat_2_number || '45 km²' %>"></div>
+        <div class="form-group"><label>2-ci Statistika - Etiket</label><input type="text" name="stat_2_label" value="<%= settings.stat_2_label || 'Sahə' %>"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>3-cü Statistika - İkon</label><input type="text" name="stat_3_icon" value="<%= settings.stat_3_icon || '🏛️' %>"></div>
+        <div class="form-group"><label>3-cü Statistika - Rəqəm</label><input type="text" name="stat_3_number" value="<%= settings.stat_3_number || '150+' %>"></div>
+        <div class="form-group"><label>3-cü Statistika - Etiket</label><input type="text" name="stat_3_label" value="<%= settings.stat_3_label || 'İl Tarix' %>"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>4-cü Statistika - İkon</label><input type="text" name="stat_4_icon" value="<%= settings.stat_4_icon || '🌳' %>"></div>
+        <div class="form-group"><label>4-cü Statistika - Rəqəm</label><input type="text" name="stat_4_number" value="<%= settings.stat_4_number || '10+' %>"></div>
+        <div class="form-group"><label>4-cü Statistika - Etiket</label><input type="text" name="stat_4_label" value="<%= settings.stat_4_label || 'Görməli yer' %>"></div>
+      </div>
+      <h3 class="form-section-title">📞 Əlaqə Məlumatları</h3>
+      <div class="form-group"><label>Telefon</label><input type="text" name="contact_phone" value="<%= settings.contact_phone || '' %>"></div>
+      <div class="form-group"><label>E-poçt</label><input type="email" name="contact_email" value="<%= settings.contact_email || '' %>"></div>
+      <div class="form-group"><label>Ünvan</label><input type="text" name="contact_address" value="<%= settings.contact_address || '' %>"></div>
+      <div class="form-group"><label>Google Maps Xəritə Kodu (Embed URL)</label><textarea name="contact_map" rows="3" placeholder="https://www.google.com/maps/embed?..."><%= settings.contact_map || '' %></textarea><small style="color: #6c757d; font-size: 12px;">Google Maps-də ünvanı tapın → "Paylaş" → "Xəritəni yerləşdir" → HTML kodunu kopyalayın → yalnız src="..." içindəki URL-i buraya yapışdırın.</small></div>
+      <h3 class="form-section-title">📱 Sosial Şəbəkələr</h3>
+      <div class="form-group"><label>Facebook</label><input type="text" name="social_facebook" value="<%= settings.social_facebook || '' %>"></div>
+      <div class="form-group"><label>Instagram</label><input type="text" name="social_instagram" value="<%= settings.social_instagram || '' %>"></div>
+      <div class="form-group"><label>YouTube</label><input type="text" name="social_youtube" value="<%= settings.social_youtube || '' %>"></div>
+      <h3 class="form-section-title">📄 Footer</h3>
+      <div class="form-group"><label>Footer Mətni</label><input type="text" name="footer_text" value="<%= settings.footer_text || '' %>"></div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">💾 Yadda saxla</button>
+        <a href="/admin" class="btn">← Geri</a>
+      </div>
+    </form>
+  </main>
+</div>
 </body>
 </html>

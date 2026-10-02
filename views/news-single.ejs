@@ -3,178 +3,135 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= news.title %> — <%= settings.site_name || 'Andurma Kəndi' %></title>
-  <link rel="stylesheet" href="/style.css">
+  <title><%= news.title %> - <%= settings.site_name || 'Andurma Kəndi' %></title>
+  <link rel="stylesheet" href="/css/style.css">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <% if (gaId) { %>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=<%= gaId %>"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '<%= gaId %>');
+  </script>
+  <% } %>
 </head>
 <body>
-  <header class="site-header">
-    <div class="container header-inner">
-      <a href="/" class="site-logo">
-        <div class="logo-text">
-          <span class="logo-name"><%= settings.site_name || 'Andurma Kəndi' %></span>
-          <span class="logo-tagline">Qəbələ rayonu</span>
-        </div>
-      </a>
-      <nav class="main-nav" id="mainNav">
-        <a href="/">Ana səhifə</a>
-        <a href="/xeberler" class="active">Xəbərlər</a>
-        <a href="/isler">Görülən işlər</a>
-        <a href="/meqaleler">Məqalələr</a>
-        <a href="/koshe">Köşə</a>
-        <a href="/qalereya">Qalereya</a>
-        <a href="/haqqinda">Haqqında</a>
-        <a href="/elaqe">Əlaqə</a>
-      </nav>
-      <button class="mobile-menu-btn" id="mobileMenuBtn"><span></span><span></span><span></span></button>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="/" class="site-logo">
+      <% if (settings.logo) { %><img src="<%= settings.logo %>" alt="Logo" class="logo-img"><% } %>
+      <div class="logo-text">
+        <span class="logo-name"><%= settings.site_name || 'Andurma Kəndi' %></span>
+        <span class="logo-tagline"><%= settings.site_tagline || 'QƏBƏLƏ RAYONU' %></span>
+      </div>
+    </a>
+    <nav class="main-nav" id="mainNav">
+      <a href="/">Ana səhifə</a>
+      <a href="/xeberler" class="active">Xəbərlər</a>
+      <a href="/isler">Görülən işlər</a>
+      <a href="/meqaleler">Məqalələr</a>
+      <a href="/koshe">Köşə</a>
+      <a href="/qalereya">Qalereya</a>
+      <a href="/gormeli-yerler">Görməli yerlər</a>
+      <a href="/haqqinda">Haqqında</a>
+      <a href="/elaqe">Əlaqə</a>
+    </nav>
+    <button class="mobile-menu-btn" id="mobileMenuBtn"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<section class="single-content">
+  <div class="container-narrow">
+    <div class="breadcrumb">
+      <a href="/">Ana səhifə</a> / <a href="/xeberler">Xəbərlər</a> / <%= news.title %>
     </div>
-  </header>
-
-  <article class="single-content">
-    <div class="container-narrow">
-      <nav class="breadcrumb">
-        <a href="/">Ana səhifə</a> / <a href="/xeberler">Xəbərlər</a> / <span><%= news.title %></span>
-      </nav>
-
-      <span class="news-category cat-<%= news.category %>">
-        <%= news.category === 'yol' ? '🛣️ Yol' : 
-            news.category === 'mekteb' ? '🏫 Məktəb' : 
-            news.category === 'su' ? '💧 Su' : 
-            news.category === 'isiq' ? '⚡ İşıq' : 
-            news.category === 'temizlik' ? '🧹 Təmizlik' : '📌 Digər' %>
-      </span>
-
-      <h1 class="single-title"><%= news.title %></h1>
-
-      <div class="single-meta">
-        <span>📅 <%= new Date(news.created_at).toLocaleDateString('az-AZ') %></span>
-        <% if (news.author_name) { %>
-          <span>✍️ <%= news.author_name %></span>
-        <% } %>
-        <span>👁️ <%= news.views || 0 %> baxış</span>
-        <span>❤️ <%= news.likes || 0 %> bəyənmə</span>
-      </div>
-
-      <% if (news.image) { %>
-        <img src="<%= news.image %>" alt="<%= news.title %>" class="single-image">
-      <% } %>
-
-      <% if (news.video) { %>
-        <video controls class="single-video">
-          <source src="<%= news.video %>">
-        </video>
-      <% } %>
-
-      <div class="single-text">
-        <%= news.content %>
-      </div>
-
-      <% if (news.location) { %>
-        <div class="single-location">
-          📍 <strong>Yer:</strong> <%= news.location %>
-        </div>
-      <% } %>
-
-      <div class="like-section">
-        <button class="like-btn" id="likeBtn" onclick="likeItem('news', <%= news.id %>)">
-          <span class="like-icon">❤️</span>
-          <span class="like-text">Bəyən</span>
-          <span class="like-count" id="likeCount"><%= news.likes || 0 %></span>
-        </button>
-      </div>
-
-      <div class="share-buttons">
-        <span class="share-label">Paylaş:</span>
-        <a href="https://www.facebook.com/sharer/sharer.php?u=https://andurma.site/xeber/<%= news.id %>" target="_blank" class="share-btn share-facebook" title="Facebook">f</a>
-        <a href="https://wa.me/?text=<%= news.title %> - https://andurma.site/xeber/<%= news.id %>" target="_blank" class="share-btn share-whatsapp" title="WhatsApp">💬</a>
-        <a href="https://t.me/share/url?url=https://andurma.site/xeber/<%= news.id %>&text=<%= news.title %>" target="_blank" class="share-btn share-telegram" title="Telegram">✈️</a>
-        <button onclick="copyLink('https://andurma.site/xeber/<%= news.id %>')" class="share-btn share-copy" title="Link kopyala">📋</button>
-      </div>
+    <h1 class="single-title"><%= news.title %></h1>
+    <div class="single-meta">
+      <span class="badge-cat cat-<%= news.category %>"><%= news.category %></span>
+      <span>✍️ <%= news.author_name %></span>
+      <span>📅 <%= new Date(news.created_at).toLocaleDateString('az-AZ') %></span>
+      <span>👁️ <%= news.views || 0 %> baxış</span>
     </div>
 
-    <div class="container-narrow">
-      <section class="comments-section">
-        <h3>💬 Şərhlər (<%= comments.length %>)</h3>
+    <% if (news.image) { %><img src="<%= news.image %>" alt="<%= news.title %>" class="single-image"><% } %>
+    <% if (news.video) { %><video src="<%= news.video %>" controls class="single-video"></video><% } %>
 
-        <% if (typeof sent !== 'undefined' && sent) { %>
-          <p class="ok">✅ Şərhiniz göndərildi. Təsdiqdən sonra yayımlanacaq.</p>
-        <% } %>
+    <div class="single-text"><%= news.content %></div>
 
-        <% if (comments.length === 0) { %>
-          <p class="empty-message">Hələ şərh yoxdur.</p>
-        <% } else { %>
-          <% comments.forEach(c => { %>
-            <div class="comment">
-              <div class="comment-head">
-                <strong><%= c.name %></strong>
-                <small><%= new Date(c.created_at).toLocaleDateString('az-AZ') %></small>
-              </div>
-              <p><%= c.text %></p>
+    <% if (news.location) { %>
+      <div class="single-location">📍 <strong>Yer:</strong> <%= news.location %></div>
+    <% } %>
+
+    <div class="like-section">
+      <button class="like-btn" onclick="likeNews(<%= news.id %>)">
+        <span class="like-icon">❤️</span>
+        <span>Bəyən</span>
+        <span class="like-count" id="likeCount"><%= news.likes || 0 %></span>
+      </button>
+    </div>
+
+    <div class="share-buttons">
+      <span class="share-label">Paylaş:</span>
+      <a href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent('http://localhost:3000/xeber/' + news.id) %>" target="_blank" class="share-btn share-facebook">f</a>
+      <a href="https://wa.me/?text=<%= encodeURIComponent(news.title + ' - http://localhost:3000/xeber/' + news.id) %>" target="_blank" class="share-btn share-whatsapp">W</a>
+      <a href="https://t.me/share/url?url=<%= encodeURIComponent('http://localhost:3000/xeber/' + news.id) %>&text=<%= encodeURIComponent(news.title) %>" target="_blank" class="share-btn share-telegram">T</a>
+      <button class="share-btn share-copy" onclick="copyLink()">🔗</button>
+    </div>
+
+    <div class="comments-section">
+      <h3>💬 Şərhlər (<%= comments.length %>)</h3>
+      <% if (comments.length > 0) { %>
+        <% comments.forEach(c => { %>
+          <div class="comment">
+            <div class="comment-head">
+              <strong><%= c.name %></strong>
+              <small><%= new Date(c.created_at).toLocaleDateString('az-AZ') %></small>
             </div>
-          <% }) %>
-        <% } %>
-
-        <div class="comment-form">
-          <h4>Şərh yaz</h4>
-          <form method="POST" action="/comment/news/<%= news.id %>">
-            <input type="text" name="name" placeholder="Adınız" required>
-            <textarea name="text" rows="4" placeholder="Şərhinizi yazın..." required></textarea>
-            <button type="submit" class="btn btn-primary">Göndər</button>
-          </form>
-        </div>
-      </section>
-
-      <a href="/xeberler" class="back-link">← Bütün xəbərlər</a>
-    </div>
-  </article>
-
-  <footer class="site-footer">
-    <div class="container">
-      <div class="footer-bottom">
-        <p><%= settings.footer_text || '© 2026 Andurma Kəndi' %></p>
+            <p><%= c.text %></p>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <p class="empty-message">Hələ şərh yoxdur. İlk şərhi siz yazın!</p>
+      <% } %>
+      <div class="comment-form">
+        <h4>Şərh yaz</h4>
+        <% if (sent) { %><div class="ok">✅ Şərhiniz göndərildi! Təsdiqləndikdən sonra görünəcək.</div><% } %>
+        <form method="POST" action="/comment/news/<%= news.id %>">
+          <input type="text" name="name" placeholder="Adınız *" required>
+          <textarea name="text" rows="4" placeholder="Şərhiniz *" required></textarea>
+          <button type="submit" class="btn btn-primary">Göndər</button>
+        </form>
       </div>
     </div>
-  </footer>
+    <a href="/xeberler" class="back-link">← Bütün xəbərlər</a>
+  </div>
+</section>
 
-  <script>
-    document.getElementById('mobileMenuBtn')?.addEventListener('click', function() {
-      document.getElementById('mainNav').classList.toggle('active');
-      this.classList.toggle('active');
-    });
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom">
+      <p><%= settings.footer_text || '© 2026 Andurma Kəndi — Bütün hüquqlar qorunur.' %></p>
+      <a href="/admin/login" class="admin-link">Admin girişi</a>
+    </div>
+  </div>
+</footer>
 
-    function copyLink(url) {
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(url).then(() => alert('✅ Link kopyalandı!'));
-      } else {
-        prompt('Link:', url);
-      }
-    }
-
-    function likeItem(type, id) {
-      const btn = document.getElementById('likeBtn');
-      const count = document.getElementById('likeCount');
-      const likedKey = 'liked_' + type + '_' + id;
-      if (localStorage.getItem(likedKey)) { alert('Artıq bəyənmisiniz!'); return; }
-      fetch('/like/' + type + '/' + id, { method: 'POST' })
-        .then(r => r.json())
-        .then(data => {
-          if (data.success) {
-            count.textContent = data.likes;
-            btn.classList.add('liked');
-            btn.querySelector('.like-text').textContent = 'Bəyəndiniz';
-            localStorage.setItem(likedKey, '1');
-          }
-        });
-    }
-
-    const likedKey = 'liked_news_<%= news.id %>';
-    if (localStorage.getItem(likedKey)) {
-      const btn = document.getElementById('likeBtn');
-      if (btn) {
-        btn.classList.add('liked');
-        btn.querySelector('.like-text').textContent = 'Bəyəndiniz';
-      }
-    }
-  </script>
+<script>
+  document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+    document.getElementById('mainNav').classList.toggle('active');
+    this.classList.toggle('active');
+  });
+  function likeNews(id) {
+    fetch('/like/news/' + id, { method: 'POST' })
+      .then(r => r.json())
+      .then(data => { if (data.success) document.getElementById('likeCount').textContent = data.likes; });
+  }
+  function copyLink() {
+    navigator.clipboard.writeText(window.location.href);
+    alert('Link kopyalandı!');
+  }
+</script>
 </body>
 </html>

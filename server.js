@@ -22,49 +22,35 @@ function convertSql(sql) {
 
 const db = {
   get: (sql, params, callback) => {
-    if (typeof params === 'function') {
-      callback = params;
-      params = [];
-    }
+    if (typeof params === 'function') { callback = params; params = []; }
     const pgSql = convertSql(sql);
     pool.query(pgSql, params || [])
       .then(result => callback(null, result.rows[0]))
       .catch(err => callback(err));
   },
   all: (sql, params, callback) => {
-    if (typeof params === 'function') {
-      callback = params;
-      params = [];
-    }
+    if (typeof params === 'function') { callback = params; params = []; }
     const pgSql = convertSql(sql);
     pool.query(pgSql, params || [])
       .then(result => callback(null, result.rows))
       .catch(err => callback(err));
   },
   run: (sql, params, callback) => {
-    if (typeof params === 'function') {
-      callback = params;
-      params = [];
-    }
+    if (typeof params === 'function') { callback = params; params = []; }
     const pgSql = convertSql(sql);
     pool.query(pgSql, params || [])
-      .then(result => {
-        if (callback) callback(null, result);
-      })
+      .then(result => { if (callback) callback(null, result); })
       .catch(err => {
         if (callback) callback(err);
         else console.error('DB Error:', err.message);
       });
   },
-  serialize: (callback) => {
-    if (callback) callback();
-  }
+  serialize: (callback) => { if (callback) callback(); }
 };
 
 // ---------- VERİLƏNLƏR BAZASI SXEMİ ----------
 async function initDatabase() {
   try {
-    // USERS cədvəli (rol sistemi ilə)
     await pool.query(`
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
@@ -80,7 +66,6 @@ async function initDatabase() {
       )
     `);
 
-    // NEWS cədvəli (xəbərlər / görülən işlər)
     await pool.query(`
       CREATE TABLE IF NOT EXISTS news (
         id SERIAL PRIMARY KEY,
@@ -98,7 +83,6 @@ async function initDatabase() {
       )
     `);
 
-    // ARTICLES cədvəli (məqalələr)
     await pool.query(`
       CREATE TABLE IF NOT EXISTS articles (
         id SERIAL PRIMARY KEY,
@@ -113,7 +97,6 @@ async function initDatabase() {
       )
     `);
 
-    // KOSHE cədvəli (köşə yazıları)
     await pool.query(`
       CREATE TABLE IF NOT EXISTS koshe (
         id SERIAL PRIMARY KEY,
@@ -128,7 +111,6 @@ async function initDatabase() {
       )
     `);
 
-    // GALLERY cədvəli (foto/video qalereya)
     await pool.query(`
       CREATE TABLE IF NOT EXISTS gallery (
         id SERIAL PRIMARY KEY,
@@ -140,7 +122,6 @@ async function initDatabase() {
       )
     `);
 
-    // COMMENTS cədvəli (şərhlər)
     await pool.query(`
       CREATE TABLE IF NOT EXISTS comments (
         id SERIAL PRIMARY KEY,
@@ -153,7 +134,6 @@ async function initDatabase() {
       )
     `);
 
-    // SETTINGS cədvəli
     await pool.query(`
       CREATE TABLE IF NOT EXISTS settings (
         key TEXT PRIMARY KEY,
@@ -161,7 +141,6 @@ async function initDatabase() {
       )
     `);
 
-    // CONTACT cədvəli (əlaqə mesajları)
     await pool.query(`
       CREATE TABLE IF NOT EXISTS contact (
         id SERIAL PRIMARY KEY,
@@ -174,9 +153,29 @@ async function initDatabase() {
       )
     `);
 
-    // Default settings
+    // PLACES cədvəli (Görməli yerlər)
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS places (
+        id SERIAL PRIMARY KEY,
+        title TEXT,
+        description TEXT,
+        image TEXT,
+        location TEXT,
+        map_link TEXT,
+        youtube_link TEXT,
+        views INTEGER DEFAULT 0,
+        likes INTEGER DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Əgər places cədvəli əvvəl yaradılıbsa və youtube_link sütunu yoxdursa, əlavə et
+    await pool.query(`ALTER TABLE places ADD COLUMN IF NOT EXISTS youtube_link TEXT`);
+    await pool.query(`ALTER TABLE places ADD COLUMN IF NOT EXISTS likes INTEGER DEFAULT 0`);
+
     const defaultSettings = [
       ['site_name', 'Andurma Kəndi'],
+      ['site_tagline', 'QƏBƏLƏ RAYONU'],
       ['hero_title', 'Andurma Kəndinə Xoş Gəldiniz'],
       ['hero_subtitle', 'Yaşıl təbiətin qoynunda bir kənd'],
       ['hero_image', ''],
@@ -185,11 +184,24 @@ async function initDatabase() {
       ['about_text', 'Andurma kəndi Qəbələ rayonunda yerləşir...'],
       ['contact_phone', ''],
       ['contact_email', ''],
-      ['contact_address', 'Andurma kəndi, Qəbələ rayonu'],
+      ['contact_address', 'Andurma kəndi, Lerik rayonu'],
+      ['contact_map', ''],
       ['social_facebook', ''],
       ['social_instagram', ''],
       ['social_youtube', ''],
-      ['footer_text', '© 2026 Andurma Kəndi — Bütün hüquqlar qorunur.']
+      ['footer_text', '© 2026 Andurma Kəndi — Bütün hüquqlar qorunur.'],
+      ['stat_1_icon', '👥'],
+      ['stat_1_number', '2,500+'],
+      ['stat_1_label', 'Sakin'],
+      ['stat_2_icon', '🏞️'],
+      ['stat_2_number', '45 km²'],
+      ['stat_2_label', 'Sahə'],
+      ['stat_3_icon', '🏛️'],
+      ['stat_3_number', '150+'],
+      ['stat_3_label', 'İl Tarix'],
+      ['stat_4_icon', '🌳'],
+      ['stat_4_number', '10+'],
+      ['stat_4_label', 'Görməli yer']
     ];
 
     for (const [key, value] of defaultSettings) {
@@ -200,19 +212,14 @@ async function initDatabase() {
       );
     }
 
-    // Default SUPER ADMIN
     const hash = bcrypt.hashSync('admin123', 10);
     await pool.query(
       `INSERT INTO users (id, username, password, full_name, role, active, permissions) 
        VALUES (1, 'admin', $1, 'Super Admin', 'super_admin', 1, $2)
        ON CONFLICT (id) DO NOTHING`,
       [hash, JSON.stringify({
-        can_add_news: true,
-        can_add_articles: true,
-        can_add_koshe: true,
-        can_add_gallery: true,
-        can_manage_users: true,
-        can_manage_settings: true,
+        can_add_news: true, can_add_articles: true, can_add_koshe: true,
+        can_add_gallery: true, can_manage_users: true, can_manage_settings: true,
         can_approve_comments: true
       })]
     );
@@ -231,31 +238,27 @@ app.use(express.json());
 app.use(express.static('public'));
 app.use('/uploads', express.static('uploads'));
 app.use(session({
-  secret: 'andurma-secret-key-2026',
+  secret: process.env.SESSION_SECRET || 'andurma-secret-key-2026',
   resave: false,
   saveUninitialized: false
 }));
 
-// DB-ni hər request-də əlçatan et + settings yüklə
 app.use((req, res, next) => {
   req.db = db;
   res.locals.user = req.session.user || null;
+  res.locals.gaId = process.env.GA_MEASUREMENT_ID || '';
   
   db.all('SELECT key, value FROM settings', (err, rows) => {
     const settings = {};
-    if (rows) {
-      rows.forEach(r => settings[r.key] = r.value);
-    }
+    if (rows) rows.forEach(r => settings[r.key] = r.value);
     res.locals.settings = settings;
     next();
   });
 });
 
-// ---------- MARŞRUTLAR ----------
 app.use('/', require('./routes/public')(db));
 app.use('/admin', require('./routes/admin')(db));
 
-// ---------- BAŞLAT ----------
 const PORT = process.env.PORT || 3000;
 
 initDatabase().then(() => {

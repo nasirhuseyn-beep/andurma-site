@@ -2,94 +2,62 @@
 <html lang="az">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>İstifadəçilər — Admin Panel</title>
-  <link rel="stylesheet" href="/style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <title>İstifadəçilər - Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  <div class="admin-wrap">
-    <aside class="admin-sidebar">
-      <div class="admin-brand">🌿 Andurma</div>
-      <a href="/admin">📊 Dashboard</a>
-      <a href="/admin/news">📰 Xəbərlər</a>
-      <a href="/admin/articles">📝 Məqalələr</a>
-      <a href="/admin/koshe">✍️ Köşə</a>
-      <a href="/admin/gallery">📸 Qalereya</a>
-      <a href="/admin/comments">💬 Şərhlər</a>
-      <a href="/admin/messages">📧 Mesajlar</a>
-      <a href="/admin/users" class="active">👥 İstifadəçilər</a>
-      <a href="/admin/settings">⚙️ Sazlamalar</a>
-      <a href="/admin/password">🔒 Şifrə</a>
-      <a href="/" target="_blank">🌐 Sayta bax</a>
-      <a href="/admin/logout">🚪 Çıxış</a>
-    </aside>
-
-    <main class="admin-main">
-      <div class="admin-header">
-        <h1>👥 İstifadəçilər</h1>
-        <a href="/admin/users/new" class="btn btn-primary">➕ Yeni istifadəçi</a>
-      </div>
-
-      <p class="admin-info">
-        💡 <strong>Super Admin:</strong> hər şeyə icazəli · 
-        <strong>Redaktor:</strong> yalnız öz yazılarını idarə edir
-      </p>
-
-      <% if (users.length === 0) { %>
-        <p class="empty-message">Hələ istifadəçi yoxdur.</p>
-      <% } else { %>
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Ad</th>
-              <th>İstifadəçi adı</th>
-              <th>Email</th>
-              <th>Rol</th>
-              <th>Status</th>
-              <th>Son giriş</th>
-              <th>Əməliyyat</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% users.forEach(u => { %>
-              <tr>
-                <td>#<%= u.id %></td>
-                <td><strong><%= u.full_name || '—' %></strong></td>
-                <td><%= u.username %></td>
-                <td><%= u.email || '—' %></td>
-                <td>
-                  <% if (u.role === 'super_admin') { %>
-                    <span class="badge-role role-super">👑 Super Admin</span>
-                  <% } else { %>
-                    <span class="badge-role role-editor">✏️ Redaktor</span>
-                  <% } %>
-                </td>
-                <td>
-                  <% if (u.active) { %>
-                    <span class="status status-ok">✅ Aktiv</span>
-                  <% } else { %>
-                    <span class="status status-pending">⛔ Deaktiv</span>
-                  <% } %>
-                </td>
-                <td>
-                  <small><%= u.last_login ? new Date(u.last_login).toLocaleDateString('az-AZ') : 'Heç vaxt' %></small>
-                </td>
-                <td class="actions">
-                  <a href="/admin/users/edit/<%= u.id %>" class="btn btn-sm">✏️</a>
-                  <% if (u.id !== 1) { %>
-                    <form method="POST" action="/admin/users/delete/<%= u.id %>" style="display:inline;">
-                      <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bu istifadəçini silmək istəyirsiniz?');">🗑️</button>
-                    </form>
-                  <% } %>
-                </td>
-              </tr>
-            <% }) %>
-          </tbody>
-        </table>
-      <% } %>
-    </main>
-  </div>
+<div class="admin-wrap">
+  <aside class="admin-sidebar">
+    <div class="admin-brand">🌿 Andurma</div>
+    <a href="/admin">📊 Dashboard</a>
+    <a href="/admin/news">📰 Xəbərlər</a>
+    <a href="/admin/articles">📝 Məqalələr</a>
+    <a href="/admin/koshe">✍️ Köşə</a>
+    <a href="/admin/gallery">🖼️ Qalereya</a>
+    <a href="/admin/places">🗺️ Görməli Yerlər</a>
+    <a href="/admin/comments">💬 Şərhlər</a>
+    <a href="/admin/messages">📧 Mesajlar</a>
+    <a href="/admin/users" class="active">👥 İstifadəçilər</a>
+    <a href="/admin/settings">⚙️ Sazlamalar</a>
+    <a href="/admin/password">🔒 Şifrə</a>
+    <a href="/" target="_blank">🌐 Sayta bax</a>
+    <a href="/admin/logout">🚪 Çıxış</a>
+  </aside>
+  <main class="admin-main">
+    <div class="admin-header">
+      <h1>👥 İstifadəçilər</h1>
+      <a href="/admin/users/new" class="btn btn-primary">➕ Yeni İstifadəçi</a>
+    </div>
+    <% if (users && users.length > 0) { %>
+    <table class="admin-table">
+      <thead>
+        <tr><th>ID</th><th>İstifadəçi adı</th><th>Ad</th><th>E-poçt</th><th>Rol</th><th>Status</th><th>Əməliyyatlar</th></tr>
+      </thead>
+      <tbody>
+        <% users.forEach(item => { %>
+        <tr>
+          <td>#<%= item.id %></td>
+          <td><strong><%= item.username %></strong></td>
+          <td><%= item.full_name || '-' %></td>
+          <td><%= item.email || '-' %></td>
+          <td><span class="badge-role <%= item.role === 'super_admin' ? 'role-super' : 'role-editor' %>"><%= item.role === 'super_admin' ? 'Super Admin' : 'Redaktor' %></span></td>
+          <td><% if (item.active) { %><span class="status status-ok">Aktiv</span><% } else { %><span class="status status-pending">Deaktiv</span><% } %></td>
+          <td>
+            <div class="actions">
+              <a href="/admin/users/edit/<%= item.id %>" class="btn btn-sm btn-warn">✏️</a>
+              <form method="POST" action="/admin/users/delete/<%= item.id %>" style="display:inline;" onsubmit="return confirm('Əminsiniz?')">
+                <button type="submit" class="btn btn-sm btn-danger">🗑️</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+    <% } else { %>
+      <p class="empty-message">Hələ istifadəçi yoxdur.</p>
+    <% } %>
+  </main>
+</div>
 </body>
 </html>

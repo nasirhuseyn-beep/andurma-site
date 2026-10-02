@@ -2,118 +2,60 @@
 <html lang="az">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard — Admin Panel</title>
-  <link rel="stylesheet" href="/style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <title>Dashboard - Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  <div class="admin-wrap">
-    <aside class="admin-sidebar">
-      <div class="admin-brand">🌿 Andurma</div>
-      <a href="/admin" class="active">📊 Dashboard</a>
-      <a href="/admin/news">📰 Xəbərlər</a>
-      <a href="/admin/articles">📝 Məqalələr</a>
-      <a href="/admin/koshe">✍️ Köşə</a>
-      <a href="/admin/gallery">📸 Qalereya</a>
-      <a href="/admin/comments">💬 Şərhlər</a>
-      <a href="/admin/messages">📧 Mesajlar</a>
-      <% if (user && user.role === 'super_admin') { %>
-        <a href="/admin/users">👥 İstifadəçilər</a>
-        <a href="/admin/settings">⚙️ Sazlamalar</a>
+<div class="admin-wrap">
+  <aside class="admin-sidebar">
+    <div class="admin-brand">🌿 Andurma</div>
+    <a href="/admin" class="active">📊 Dashboard</a>
+    <a href="/admin/news">📰 Xəbərlər</a>
+    <a href="/admin/articles">📝 Məqalələr</a>
+    <a href="/admin/koshe">✍️ Köşə</a>
+    <a href="/admin/gallery">🖼️ Qalereya</a>
+    <a href="/admin/places">🗺️ Görməli Yerlər</a>
+    <a href="/admin/comments">💬 Şərhlər</a>
+    <a href="/admin/messages">📧 Mesajlar</a>
+    <a href="/admin/users">👥 İstifadəçilər</a>
+    <a href="/admin/settings">⚙️ Sazlamalar</a>
+    <a href="/admin/password">🔒 Şifrə</a>
+    <a href="/" target="_blank">🌐 Sayta bax</a>
+    <a href="/admin/logout">🚪 Çıxış</a>
+  </aside>
+  <main class="admin-main">
+    <div class="admin-header">
+      <h1>Dashboard</h1>
+      <div class="admin-user">
+        <span>👤 <%= user.full_name || user.username %></span>
+        <span class="user-role role-super"><%= user.role === 'super_admin' ? 'Super Admin' : 'Redaktor' %></span>
+      </div>
+    </div>
+    <div class="welcome">Xoş gəldiniz, <strong><%= user.full_name || user.username %></strong>!</div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-icon">📰</div><div class="stat-info"><h3><%= newsCount %></h3><p>Xəbər</p></div></div>
+      <div class="stat-card"><div class="stat-icon">📝</div><div class="stat-info"><h3><%= articleCount %></h3><p>Məqalə</p></div></div>
+      <div class="stat-card"><div class="stat-icon">✍️</div><div class="stat-info"><h3><%= kosheCount %></h3><p>Köşə Yazısı</p></div></div>
+      <div class="stat-card"><div class="stat-icon">🗺️</div><div class="stat-info"><h3><%= placeCount %></h3><p>Görməli Yer</p></div></div>
+      <div class="stat-card"><div class="stat-icon">👁️</div><div class="stat-info"><h3><%= totalViews %></h3><p>Ümumi Baxış</p></div></div>
+      <div class="stat-card"><div class="stat-icon">❤️</div><div class="stat-info"><h3><%= totalLikes %></h3><p>Ümumi Bəyənmə</p></div></div>
+      <% if (user.role === 'super_admin') { %>
+      <div class="stat-card <%= pendingComments > 0 ? 'alert' : '' %>"><div class="stat-icon">💬</div><div class="stat-info"><h3><%= pendingComments %></h3><p>Gözləyən Şərh</p></div></div>
+      <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-info"><h3><%= userCount %></h3><p>İstifadəçi</p></div></div>
       <% } %>
-      <a href="/admin/password">🔒 Şifrə</a>
-      <a href="/" target="_blank">🌐 Sayta bax</a>
-      <a href="/admin/logout">🚪 Çıxış</a>
-    </aside>
-
-    <main class="admin-main">
-      <div class="admin-header">
-        <h1>Dashboard</h1>
-        <div class="admin-user">
-          <span class="user-role <%= user && user.role === 'super_admin' ? 'role-super' : 'role-editor' %>">
-            <%= user && user.role === 'super_admin' ? '👑 Super Admin' : '✏️ Redaktor' %>
-          </span>
-          <strong><%= user.full_name || user.username %></strong>
-        </div>
-      </div>
-
-      <p class="welcome">Xoş gəldiniz, <strong><%= user.full_name || user.username %></strong>!</p>
-
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-icon">📰</div>
-          <div class="stat-info">
-            <h3><%= newsCount %></h3>
-            <p>Xəbər</p>
-          </div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-icon">📝</div>
-          <div class="stat-info">
-            <h3><%= articleCount %></h3>
-            <p>Məqalə</p>
-          </div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-icon">✍️</div>
-          <div class="stat-info">
-            <h3><%= kosheCount %></h3>
-            <p>Köşə yazısı</p>
-          </div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-icon">👁️</div>
-          <div class="stat-info">
-            <h3><%= totalViews %></h3>
-            <p>Ümumi baxış</p>
-          </div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-icon">❤️</div>
-          <div class="stat-info">
-            <h3><%= totalLikes %></h3>
-            <p>Ümumi bəyənmə</p>
-          </div>
-        </div>
-
-        <% if (user && user.role === 'super_admin') { %>
-          <div class="stat-card <%= pendingComments > 0 ? 'alert' : '' %>">
-            <div class="stat-icon">💬</div>
-            <div class="stat-info">
-              <h3><%= pendingComments %></h3>
-              <p>Gözləyən şərh</p>
-            </div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-icon">👥</div>
-            <div class="stat-info">
-              <h3><%= userCount %></h3>
-              <p>İstifadəçi</p>
-            </div>
-          </div>
-        <% } %>
-      </div>
-
-      <div class="quick-actions">
-        <h2>⚡ Sürətli əməliyyatlar</h2>
-        <a href="/admin/news/new" class="btn btn-primary">➕ Yeni xəbər</a>
-        <a href="/admin/articles/new" class="btn btn-primary">📝 Yeni məqalə</a>
-        <a href="/admin/koshe/new" class="btn btn-primary">✍️ Yeni köşə yazısı</a>
-        <a href="/admin/gallery/new" class="btn">📸 Yeni foto/video</a>
-        <% if (user && user.role === 'super_admin') { %>
-          <a href="/admin/users/new" class="btn">👥 Yeni istifadəçi</a>
-        <% } %>
-        <% if (user && user.role === 'super_admin' && pendingComments > 0) { %>
-          <a href="/admin/comments" class="btn btn-warn">💬 Şərhlərə bax (<%= pendingComments %>)</a>
-        <% } %>
-      </div>
-    </main>
-  </div>
+    </div>
+    <div class="quick-actions">
+      <h2>⚡ Sürətli Əməliyyatlar</h2>
+      <a href="/admin/news/new" class="btn btn-primary">➕ Yeni Xəbər</a>
+      <a href="/admin/articles/new" class="btn btn-primary">📝 Yeni Məqalə</a>
+      <a href="/admin/koshe/new" class="btn btn-primary">✍️ Yeni Köşə Yazısı</a>
+      <a href="/admin/gallery/new" class="btn btn-primary">🖼️ Yeni Foto/Video</a>
+      <a href="/admin/places/new" class="btn btn-primary">🗺️ Yeni Görməli Yer</a>
+      <% if (user.role === 'super_admin') { %>
+      <a href="/admin/users/new" class="btn btn-primary">👥 Yeni İstifadəçi</a>
+      <% } %>
+    </div>
+  </main>
+</div>
 </body>
 </html>

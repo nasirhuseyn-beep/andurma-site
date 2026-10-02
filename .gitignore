@@ -16,3 +16,7 @@ andurma-password.txt
 andurma-url.txt
 supabase-*.txt
 *.txt
+
+# Yüklənən fayllar
+uploads/*
+!uploads/.gitkeep

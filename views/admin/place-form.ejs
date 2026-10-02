@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <title><%= place ? 'Yeri Redaktə Et' : 'Yeni Görməli Yer' %> - Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="admin-wrap">
+  <aside class="admin-sidebar">
+    <div class="admin-brand">🌿 Andurma</div>
+    <a href="/admin">📊 Dashboard</a>
+    <a href="/admin/news">📰 Xəbərlər</a>
+    <a href="/admin/articles">📝 Məqalələr</a>
+    <a href="/admin/koshe">✍️ Köşə</a>
+    <a href="/admin/gallery">🖼️ Qalereya</a>
+    <a href="/admin/places" class="active">🗺️ Görməli Yerlər</a>
+    <a href="/admin/comments">💬 Şərhlər</a>
+    <a href="/admin/messages">📧 Mesajlar</a>
+    <a href="/admin/users">👥 İstifadəçilər</a>
+    <a href="/admin/settings">⚙️ Sazlamalar</a>
+    <a href="/admin/password">🔒 Şifrə</a>
+    <a href="/" target="_blank">🌐 Sayta bax</a>
+    <a href="/admin/logout">🚪 Çıxış</a>
+  </aside>
+  <main class="admin-main">
+    <div class="admin-header">
+      <h1><%= place ? '✏️ Yeri Redaktə Et' : '➕ Yeni Görməli Yer' %></h1>
+    </div>
+    <form method="POST" action="<%= place ? '/admin/places/edit/' + place.id : '/admin/places/new' %>" enctype="multipart/form-data" class="post-form">
+      <div class="form-group">
+        <label>Başlıq</label>
+        <input type="text" name="title" value="<%= place ? place.title : '' %>" required>
+      </div>
+      <div class="form-group">
+        <label>Təsvir</label>
+        <textarea name="description" rows="8"><%= place ? place.description : '' %></textarea>
+      </div>
+      <div class="form-group">
+        <label>Yer (qısa)</label>
+        <input type="text" name="location" value="<%= place ? place.location : '' %>" placeholder="Məsələn: Kəndin mərkəzi">
+      </div>
+      <div class="form-group">
+        <label>Xəritə Linki (Google Maps embed URL)</label>
+        <textarea name="map_link" rows="3" placeholder="https://www.google.com/maps/embed?..."><%= place ? place.map_link : '' %></textarea>
+      </div>
+      <div class="form-group">
+        <label>YouTube Video Linki</label>
+        <input type="text" name="youtube_link" value="<%= place ? place.youtube_link : '' %>" placeholder="https://www.youtube.com/watch?v=...">
+        <small style="color: #6c757d; font-size: 12px;">YouTube video linkini buraya yapışdırın. Saytda avtomatik olaraq video kimi göstəriləcək.</small>
+      </div>
+      <div class="form-group">
+        <label>Şəkil</label>
+        <input type="file" name="image" accept="image/*">
+        <% if (place && place.image) { %>
+        <div class="current-file"><img src="<%= place.image %>" alt=""><small>Cari şəkil</small></div>
+        <% } %>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">💾 Yadda saxla</button>
+        <a href="/admin/places" class="btn">← Geri</a>
+      </div>
+    </form>
+  </main>
+</div>
+</body>
+</html>

@@ -2,7 +2,7 @@
 <html lang="az">
 <head>
   <meta charset="UTF-8">
-  <title>Qalereya - Admin</title>
+  <title>Görməli Yerlər - Admin</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
@@ -13,8 +13,8 @@
     <a href="/admin/news">📰 Xəbərlər</a>
     <a href="/admin/articles">📝 Məqalələr</a>
     <a href="/admin/koshe">✍️ Köşə</a>
-    <a href="/admin/gallery" class="active">🖼️ Qalereya</a>
-    <a href="/admin/places">🗺️ Görməli Yerlər</a>
+    <a href="/admin/gallery">🖼️ Qalereya</a>
+    <a href="/admin/places" class="active">🗺️ Görməli Yerlər</a>
     <a href="/admin/comments">💬 Şərhlər</a>
     <a href="/admin/messages">📧 Mesajlar</a>
     <a href="/admin/users">👥 İstifadəçilər</a>
@@ -25,29 +25,33 @@
   </aside>
   <main class="admin-main">
     <div class="admin-header">
-      <h1>🖼️ Qalereya</h1>
-      <a href="/admin/gallery/new" class="btn btn-primary">➕ Yeni Foto/Video</a>
+      <h1>🗺️ Görməli Yerlər</h1>
+      <a href="/admin/places/new" class="btn btn-primary">➕ Yeni Yer</a>
     </div>
-    <% if (gallery && gallery.length > 0) { %>
+    <% if (places && places.length > 0) { %>
     <div class="admin-gallery-grid">
-      <% gallery.forEach(item => { %>
+      <% places.forEach(item => { %>
       <div class="admin-gallery-item">
-        <% if (item.image) { %><img src="<%= item.image %>" alt=""><% } %>
-        <% if (item.video) { %><video src="<%= item.video %>" controls></video><% } %>
+        <% if (item.image) { %><img src="<%= item.image %>" alt=""><% } else { %><div class="admin-no-image">🗺️</div><% } %>
         <div class="admin-gallery-info">
           <strong><%= item.title %></strong>
-          <small><%= item.description || '' %></small>
+          <small><%= item.location || '' %></small>
+          <small>👁️ <%= item.views || 0 %> baxış</small>
+          <% if (item.youtube_link) { %><small>📺 YouTube video var</small><% } %>
         </div>
         <div class="admin-gallery-delete">
-          <form method="POST" action="/admin/gallery/delete/<%= item.id %>" onsubmit="return confirm('Əminsiniz?')">
-            <button type="submit" class="btn btn-sm btn-danger">🗑️ Sil</button>
-          </form>
+          <div class="actions">
+            <a href="/admin/places/edit/<%= item.id %>" class="btn btn-sm btn-warn">✏️</a>
+            <form method="POST" action="/admin/places/delete/<%= item.id %>" style="display:inline;" onsubmit="return confirm('Əminsiniz?')">
+              <button type="submit" class="btn btn-sm btn-danger">🗑️</button>
+            </form>
+          </div>
         </div>
       </div>
       <% }) %>
     </div>
     <% } else { %>
-      <p class="empty-message">Hələ foto/video yoxdur.</p>
+      <p class="empty-message">Hələ görməli yer yoxdur.</p>
     <% } %>
   </main>
 </div>

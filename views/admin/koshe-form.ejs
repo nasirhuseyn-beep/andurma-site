@@ -2,67 +2,53 @@
 <html lang="az">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= koshe ? 'Köşə yazısını redaktə et' : 'Yeni köşə yazısı' %> — Admin Panel</title>
-  <link rel="stylesheet" href="/style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <title><%= koshe ? 'Köşə Yazısını Redaktə Et' : 'Yeni Köşə Yazısı' %> - Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  <div class="admin-wrap">
-    <aside class="admin-sidebar">
-      <div class="admin-brand">🌿 Andurma</div>
-      <a href="/admin">📊 Dashboard</a>
-      <a href="/admin/news">📰 Xəbərlər</a>
-      <a href="/admin/articles">📝 Məqalələr</a>
-      <a href="/admin/koshe" class="active">✍️ Köşə</a>
-      <a href="/admin/gallery">📸 Qalereya</a>
-      <a href="/admin/comments">💬 Şərhlər</a>
-      <a href="/admin/messages">📧 Mesajlar</a>
-      <% if (user && user.role === 'super_admin') { %>
-        <a href="/admin/users">👥 İstifadəçilər</a>
-        <a href="/admin/settings">⚙️ Sazlamalar</a>
-      <% } %>
-      <a href="/admin/password">🔒 Şifrə</a>
-      <a href="/" target="_blank">🌐 Sayta bax</a>
-      <a href="/admin/logout">🚪 Çıxış</a>
-    </aside>
-
-    <main class="admin-main">
-      <h1><%= koshe ? '✏️ Köşə yazısını redaktə et' : '➕ Yeni köşə yazısı' %></h1>
-
-      <form method="POST" enctype="multipart/form-data" class="post-form"
-            action="<%= koshe ? '/admin/koshe/edit/' + koshe.id : '/admin/koshe/new' %>">
-
-        <div class="form-group">
-          <label>Başlıq *</label>
-          <input type="text" name="title" placeholder="Yazının başlığı..."
-                 value="<%= koshe ? koshe.title : '' %>" required>
-        </div>
-
-        <div class="form-group">
-          <label>Mətn *</label>
-          <textarea name="content" rows="18" placeholder="Köşə yazısını yazın..." required><%= koshe ? koshe.content : '' %></textarea>
-        </div>
-
-        <div class="form-group">
-          <label>📷 Şəkil</label>
-          <input type="file" name="image" accept="image/*">
-          <% if (koshe && koshe.image) { %>
-            <div class="current-file">
-              <img src="<%= koshe.image %>" alt="">
-              <small>Mövcud şəkil</small>
-            </div>
-          <% } %>
-        </div>
-
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary">
-            <%= koshe ? '💾 Yadda saxla' : '✅ Əlavə et' %>
-          </button>
-          <a href="/admin/koshe" class="btn">❌ Ləğv et</a>
-        </div>
-      </form>
-    </main>
-  </div>
+<div class="admin-wrap">
+  <aside class="admin-sidebar">
+    <div class="admin-brand">🌿 Andurma</div>
+    <a href="/admin">📊 Dashboard</a>
+    <a href="/admin/news">📰 Xəbərlər</a>
+    <a href="/admin/articles">📝 Məqalələr</a>
+    <a href="/admin/koshe" class="active">✍️ Köşə</a>
+    <a href="/admin/gallery">🖼️ Qalereya</a>
+    <a href="/admin/places">🗺️ Görməli Yerlər</a>
+    <a href="/admin/comments">💬 Şərhlər</a>
+    <a href="/admin/messages">📧 Mesajlar</a>
+    <a href="/admin/users">👥 İstifadəçilər</a>
+    <a href="/admin/settings">⚙️ Sazlamalar</a>
+    <a href="/admin/password">🔒 Şifrə</a>
+    <a href="/" target="_blank">🌐 Sayta bax</a>
+    <a href="/admin/logout">🚪 Çıxış</a>
+  </aside>
+  <main class="admin-main">
+    <div class="admin-header">
+      <h1><%= koshe ? '✏️ Köşə Yazısını Redaktə Et' : '➕ Yeni Köşə Yazısı' %></h1>
+    </div>
+    <form method="POST" action="<%= koshe ? '/admin/koshe/edit/' + koshe.id : '/admin/koshe/new' %>" enctype="multipart/form-data" class="post-form">
+      <div class="form-group">
+        <label>Başlıq</label>
+        <input type="text" name="title" value="<%= koshe ? koshe.title : '' %>" required>
+      </div>
+      <div class="form-group">
+        <label>Mətn</label>
+        <textarea name="content" rows="12" required><%= koshe ? koshe.content : '' %></textarea>
+      </div>
+      <div class="form-group">
+        <label>Şəkil</label>
+        <input type="file" name="image" accept="image/*">
+        <% if (koshe && koshe.image) { %>
+        <div class="current-file"><img src="<%= koshe.image %>" alt=""><small>Cari şəkil</small></div>
+        <% } %>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">💾 Yadda saxla</button>
+        <a href="/admin/koshe" class="btn">← Geri</a>
+      </div>
+    </form>
+  </main>
+</div>
 </body>
 </html>

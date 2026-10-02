@@ -3,33 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Girişi — <%= settings.site_name || 'Andurma Kəndi' %></title>
-  <link rel="stylesheet" href="/style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <title>Admin Giriş - Andurma</title>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
-<body class="login-page">
+<body>
+<div class="login-page">
   <div class="login-box">
     <div class="login-logo">🌿</div>
-    <h1>Admin Girişi</h1>
+    <h1>Admin Giriş</h1>
     <p class="login-subtitle"><%= settings.site_name || 'Andurma Kəndi' %></p>
 
     <% if (error) { %>
-      <p class="err">❌ <%= error %></p>
+      <div class="err"><%= error %></div>
     <% } %>
 
     <form method="POST" action="/admin/login">
       <label>
         İstifadəçi adı
-        <input type="text" name="username" placeholder="admin" required autofocus>
+        <input type="text" name="username" required autofocus>
       </label>
       <label>
         Şifrə
-        <input type="password" name="password" placeholder="••••••••" required>
+        <input type="password" name="password" required>
       </label>
       <button type="submit">Daxil ol</button>
     </form>
 
     <a href="/" class="back-link">← Sayta qayıt</a>
   </div>
+</div>
 </body>
 </html>

@@ -2,100 +2,75 @@
 <html lang="az">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= news ? 'Xəbəri redaktə et' : 'Yeni xəbər' %> — Admin Panel</title>
-  <link rel="stylesheet" href="/style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <title><%= news ? 'Xəbəri Redaktə Et' : 'Yeni Xəbər' %> - Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  <div class="admin-wrap">
-    <aside class="admin-sidebar">
-      <div class="admin-brand">🌿 Andurma</div>
-      <a href="/admin">📊 Dashboard</a>
-      <a href="/admin/news" class="active">📰 Xəbərlər</a>
-      <a href="/admin/articles">📝 Məqalələr</a>
-      <a href="/admin/koshe">✍️ Köşə</a>
-      <a href="/admin/gallery">📸 Qalereya</a>
-      <a href="/admin/comments">💬 Şərhlər</a>
-      <a href="/admin/messages">📧 Mesajlar</a>
-      <% if (user && user.role === 'super_admin') { %>
-        <a href="/admin/users">👥 İstifadəçilər</a>
-        <a href="/admin/settings">⚙️ Sazlamalar</a>
-      <% } %>
-      <a href="/admin/password">🔒 Şifrə</a>
-      <a href="/" target="_blank">🌐 Sayta bax</a>
-      <a href="/admin/logout">🚪 Çıxış</a>
-    </aside>
-
-    <main class="admin-main">
-      <h1><%= news ? '✏️ Xəbəri redaktə et' : '➕ Yeni xəbər' %></h1>
-
-      <form method="POST" enctype="multipart/form-data" class="post-form"
-            action="<%= news ? '/admin/news/edit/' + news.id : '/admin/news/new' %>">
-
-        <div class="form-group">
-          <label>Başlıq *</label>
-          <input type="text" name="title" placeholder="Xəbərin başlığı..."
-                 value="<%= news ? news.title : '' %>" required>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label>Kateqoriya *</label>
-            <select name="category" required>
-              <option value="yol" <%= news && news.category === 'yol' ? 'selected' : '' %>>🛣️ Yol işləri</option>
-              <option value="mekteb" <%= news && news.category === 'mekteb' ? 'selected' : '' %>>🏫 Məktəb</option>
-              <option value="su" <%= news && news.category === 'su' ? 'selected' : '' %>>💧 Su təchizatı</option>
-              <option value="isiq" <%= news && news.category === 'isiq' ? 'selected' : '' %>>⚡ İşıqlandırma</option>
-              <option value="temizlik" <%= news && news.category === 'temizlik' ? 'selected' : '' %>>🧹 Təmizlik</option>
-              <option value="diger" <%= news && news.category === 'diger' ? 'selected' : '' %>>📌 Digər</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>Yer (optional)</label>
-            <input type="text" name="location" placeholder="Məsələn: Mərkəz küçəsi"
-                   value="<%= news ? (news.location || '') : '' %>">
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>Mətn *</label>
-          <textarea name="content" rows="15" placeholder="Xəbərin mətnini yazın..." required><%= news ? news.content : '' %></textarea>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label>📷 Şəkil</label>
-            <input type="file" name="image" accept="image/*">
-            <% if (news && news.image) { %>
-              <div class="current-file">
-                <img src="<%= news.image %>" alt="">
-                <small>Mövcud şəkil</small>
-              </div>
-            <% } %>
-          </div>
-
-          <div class="form-group">
-            <label>🎥 Video</label>
-            <input type="file" name="video" accept="video/*">
-            <% if (news && news.video) { %>
-              <div class="current-file">
-                <video src="<%= news.video %>" controls></video>
-                <small>Mövcud video</small>
-              </div>
-            <% } %>
-          </div>
-        </div>
-
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary">
-            <%= news ? '💾 Yadda saxla' : '✅ Əlavə et' %>
-          </button>
-          <a href="/admin/news" class="btn">❌ Ləğv et</a>
-        </div>
-      </form>
-    </main>
-  </div>
+<div class="admin-wrap">
+  <aside class="admin-sidebar">
+    <div class="admin-brand">🌿 Andurma</div>
+    <a href="/admin">📊 Dashboard</a>
+    <a href="/admin/news" class="active">📰 Xəbərlər</a>
+    <a href="/admin/articles">📝 Məqalələr</a>
+    <a href="/admin/koshe">✍️ Köşə</a>
+    <a href="/admin/gallery">🖼️ Qalereya</a>
+    <a href="/admin/places">🗺️ Görməli Yerlər</a>
+    <a href="/admin/comments">💬 Şərhlər</a>
+    <a href="/admin/messages">📧 Mesajlar</a>
+    <a href="/admin/users">👥 İstifadəçilər</a>
+    <a href="/admin/settings">⚙️ Sazlamalar</a>
+    <a href="/admin/password">🔒 Şifrə</a>
+    <a href="/" target="_blank">🌐 Sayta bax</a>
+    <a href="/admin/logout">🚪 Çıxış</a>
+  </aside>
+  <main class="admin-main">
+    <div class="admin-header">
+      <h1><%= news ? '✏️ Xəbəri Redaktə Et' : '➕ Yeni Xəbər' %></h1>
+    </div>
+    <form method="POST" action="<%= news ? '/admin/news/edit/' + news.id : '/admin/news/new' %>" enctype="multipart/form-data" class="post-form">
+      <div class="form-group">
+        <label>Başlıq</label>
+        <input type="text" name="title" value="<%= news ? news.title : '' %>" required>
+      </div>
+      <div class="form-group">
+        <label>Kateqoriya</label>
+        <select name="category">
+          <option value="yol" <%= news && news.category === 'yol' ? 'selected' : '' %>>🛣️ Yol</option>
+          <option value="mekteb" <%= news && news.category === 'mekteb' ? 'selected' : '' %>>🏫 Məktəb</option>
+          <option value="su" <%= news && news.category === 'su' ? 'selected' : '' %>>💧 Su</option>
+          <option value="isiq" <%= news && news.category === 'isiq' ? 'selected' : '' %>>⚡ İşıq</option>
+          <option value="temizlik" <%= news && news.category === 'temizlik' ? 'selected' : '' %>>🧹 Təmizlik</option>
+          <option value="diger" <%= news && news.category === 'diger' ? 'selected' : '' %>>📌 Digər</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Mətn</label>
+        <textarea name="content" rows="8" required><%= news ? news.content : '' %></textarea>
+      </div>
+      <div class="form-group">
+        <label>Yer</label>
+        <input type="text" name="location" value="<%= news ? news.location : '' %>">
+      </div>
+      <div class="form-group">
+        <label>Şəkil</label>
+        <input type="file" name="image" accept="image/*">
+        <% if (news && news.image) { %>
+        <div class="current-file"><img src="<%= news.image %>" alt=""><small>Cari şəkil</small></div>
+        <% } %>
+      </div>
+      <div class="form-group">
+        <label>Video</label>
+        <input type="file" name="video" accept="video/*">
+        <% if (news && news.video) { %>
+        <div class="current-file"><video src="<%= news.video %>" controls></video><small>Cari video</small></div>
+        <% } %>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">💾 Yadda saxla</button>
+        <a href="/admin/news" class="btn">← Geri</a>
+      </div>
+    </form>
+  </main>
+</div>
 </body>
 </html>

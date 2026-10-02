@@ -3,103 +3,103 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Qalereya — <%= settings.site_name || 'Andurma Kəndi' %></title>
-  <link rel="stylesheet" href="/style.css">
+  <title>Qalereya - <%= settings.site_name || 'Andurma Kəndi' %></title>
+  <link rel="stylesheet" href="/css/style.css">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <% if (gaId) { %>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=<%= gaId %>"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '<%= gaId %>');
+  </script>
+  <% } %>
 </head>
 <body>
-  <header class="site-header">
-    <div class="container header-inner">
-      <a href="/" class="site-logo">
-        <div class="logo-text">
-          <span class="logo-name"><%= settings.site_name || 'Andurma Kəndi' %></span>
-          <span class="logo-tagline">Qəbələ rayonu</span>
-        </div>
-      </a>
-      <nav class="main-nav" id="mainNav">
-        <a href="/">Ana səhifə</a>
-        <a href="/xeberler">Xəbərlər</a>
-        <a href="/isler">Görülən işlər</a>
-        <a href="/meqaleler">Məqalələr</a>
-        <a href="/koshe">Köşə</a>
-        <a href="/qalereya" class="active">Qalereya</a>
-        <a href="/haqqinda">Haqqında</a>
-        <a href="/elaqe">Əlaqə</a>
-      </nav>
-      <button class="mobile-menu-btn" id="mobileMenuBtn"><span></span><span></span><span></span></button>
-    </div>
-  </header>
 
-  <section class="page-header page-header-dark">
-    <div class="container">
-      <h1>📸 Qalereya</h1>
-      <p>Andurma kəndinin foto və videoları</p>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <% if (gallery && gallery.length > 0) { %>
-        <div class="gallery-grid-full">
-          <% gallery.forEach(item => { %>
-            <div class="gallery-card">
-              <% if (item.image) { %>
-                <img src="<%= item.image %>" alt="<%= item.title %>" onclick="openLightbox('<%= item.image %>', '<%= item.title %>')">
-              <% } else if (item.video) { %>
-                <video controls>
-                  <source src="<%= item.video %>">
-                </video>
-              <% } %>
-              <div class="gallery-card-info">
-                <h3><%= item.title %></h3>
-                <% if (item.description) { %>
-                  <p><%= item.description %></p>
-                <% } %>
-              </div>
-            </div>
-          <% }) %>
-        </div>
-      <% } else { %>
-        <p class="empty-message">Hələ foto/video yoxdur.</p>
-      <% } %>
-    </div>
-  </section>
-
-  <!-- Lightbox -->
-  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
-    <span class="lightbox-close">&times;</span>
-    <img id="lightboxImg" src="" alt="">
-    <div class="lightbox-caption" id="lightboxCaption"></div>
-  </div>
-
-  <footer class="site-footer">
-    <div class="container">
-      <div class="footer-bottom">
-        <p><%= settings.footer_text || '© 2026 Andurma Kəndi' %></p>
-        <a href="/admin/login" class="admin-link">Admin girişi</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="/" class="site-logo">
+      <% if (settings.logo) { %><img src="<%= settings.logo %>" alt="Logo" class="logo-img"><% } %>
+      <div class="logo-text">
+        <span class="logo-name"><%= settings.site_name || 'Andurma Kəndi' %></span>
+        <span class="logo-tagline"><%= settings.site_tagline || 'QƏBƏLƏ RAYONU' %></span>
       </div>
+    </a>
+    <nav class="main-nav" id="mainNav">
+      <a href="/">Ana səhifə</a>
+      <a href="/xeberler">Xəbərlər</a>
+      <a href="/isler">Görülən işlər</a>
+      <a href="/meqaleler">Məqalələr</a>
+      <a href="/koshe">Köşə</a>
+      <a href="/qalereya" class="active">Qalereya</a>
+      <a href="/gormeli-yerler">Görməli yerlər</a>
+      <a href="/haqqinda">Haqqında</a>
+      <a href="/elaqe">Əlaqə</a>
+    </nav>
+    <button class="mobile-menu-btn" id="mobileMenuBtn"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<section class="page-header page-header-dark">
+  <div class="container">
+    <h1>📸 Qalereya</h1>
+    <p>Kəndimizin gözəllikləri</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <% if (gallery && gallery.length > 0) { %>
+      <div class="gallery-grid-full">
+        <% gallery.forEach(item => { %>
+          <div class="gallery-card">
+            <% if (item.image) { %>
+              <img src="<%= item.image %>" alt="<%= item.title %>" onclick="openLightbox(this.src, '<%= item.title %>')">
+            <% } %>
+            <% if (item.video) { %>
+              <video src="<%= item.video %>" controls></video>
+            <% } %>
+            <div class="gallery-card-info">
+              <h3><%= item.title %></h3>
+              <% if (item.description) { %><p><%= item.description %></p><% } %>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } else { %><p class="empty-message">Hələ foto/video yoxdur.</p><% } %>
+  </div>
+</section>
+
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <span class="lightbox-close">&times;</span>
+  <img id="lightboxImg" src="" alt="">
+  <div class="lightbox-caption" id="lightboxCaption"></div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom">
+      <p><%= settings.footer_text || '© 2026 Andurma Kəndi — Bütün hüquqlar qorunur.' %></p>
+      <a href="/admin/login" class="admin-link">Admin girişi</a>
     </div>
-  </footer>
+  </div>
+</footer>
 
-  <script>
-    document.getElementById('mobileMenuBtn')?.addEventListener('click', function() {
-      document.getElementById('mainNav').classList.toggle('active');
-      this.classList.toggle('active');
-    });
-
-    function openLightbox(src, title) {
-      document.getElementById('lightbox').style.display = 'flex';
-      document.getElementById('lightboxImg').src = src;
-      document.getElementById('lightboxCaption').textContent = title;
-    }
-
-    function closeLightbox() {
-      document.getElementById('lightbox').style.display = 'none';
-    }
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeLightbox();
-    });
-  </script>
+<script>
+  document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+    document.getElementById('mainNav').classList.toggle('active');
+    this.classList.toggle('active');
+  });
+  function openLightbox(src, caption) {
+    document.getElementById('lightbox').style.display = 'flex';
+    document.getElementById('lightboxImg').src = src;
+    document.getElementById('lightboxCaption').textContent = caption;
+  }
+  function closeLightbox() {
+    document.getElementById('lightbox').style.display = 'none';
+  }
+</script>
 </body>
 </html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - Andurma</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="admin-wrap">
+
+  <aside class="admin-sidebar">
+    <div class="admin-brand">🌿 Andurma</div>
+    <a href="/admin" class="<%= activePage === 'dashboard' ? 'active' : '' %>">📊 Dashboard</a>
+    <a href="/admin/news" class="<%= activePage === 'news' ? 'active' : '' %>">📰 Xəbərlər</a>
+    <a href="/admin/articles" class="<%= activePage === 'articles' ? 'active' : '' %>">📝 Məqalələr</a>
+    <a href="/admin/koshe" class="<%= activePage === 'koshe' ? 'active' : '' %>">✍️ Köşə</a>
+    <a href="/admin/gallery" class="<%= activePage === 'gallery' ? 'active' : '' %>">🖼️ Qalereya</a>
+    <a href="/admin/comments" class="<%= activePage === 'comments' ? 'active' : '' %>">💬 Şərhlər</a>
+    <a href="/admin/messages" class="<%= activePage === 'messages' ? 'active' : '' %>">📧 Mesajlar</a>
+    <a href="/admin/users" class="<%= activePage === 'users' ? 'active' : '' %>">👥 İstifadəçilər</a>
+    <a href="/admin/settings" class="<%= activePage === 'settings' ? 'active' : '' %>">⚙️ Sazlamalar</a>
+    <a href="/admin/password" class="<%= activePage === 'password' ? 'active' : '' %>">🔒 Şifrə</a>
+    <a href="/" target="_blank">🌐 Sayta bax</a>
+    <a href="/admin/logout">🚪 Çıxış</a>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-header">
+      <h1><%= pageTitle %></h1>
+      <div class="admin-user">
+        <span>👤 <%= user ? user.full_name || user.username : 'Admin' %></span>
+        <span class="user-role role-super"><%= user && user.role === 'super_admin' ? 'Super Admin' : 'Redaktor' %></span>
+      </div>
+    </div>

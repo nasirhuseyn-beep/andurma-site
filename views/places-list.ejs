@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Haqqında - <%= settings.site_name || 'Andurma Kəndi' %></title>
+  <title>Görməli Yerlər - <%= settings.site_name || 'Andurma Kəndi' %></title>
   <link rel="stylesheet" href="/css/style.css">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <% if (gaId) { %>
@@ -34,8 +34,8 @@
       <a href="/meqaleler">Məqalələr</a>
       <a href="/koshe">Köşə</a>
       <a href="/qalereya">Qalereya</a>
-      <a href="/gormeli-yerler">Görməli yerlər</a>
-      <a href="/haqqinda" class="active">Haqqında</a>
+      <a href="/gormeli-yerler" class="active">Görməli yerlər</a>
+      <a href="/haqqinda">Haqqında</a>
       <a href="/elaqe">Əlaqə</a>
     </nav>
     <button class="mobile-menu-btn" id="mobileMenuBtn"><span></span><span></span><span></span></button>
@@ -44,39 +44,33 @@
 
 <section class="page-header page-header-green">
   <div class="container">
-    <h1>📖 <%= settings.about_title || 'Kənd Haqqında' %></h1>
-    <p>Andurma kəndi haqqında məlumat</p>
+    <h1>🗺️ Görməli Yerlər</h1>
+    <p>Andurma kəndinin görməli yerləri</p>
   </div>
 </section>
 
 <section class="section">
   <div class="container">
-    <div class="about-content">
-      <h2><%= settings.about_title || 'Kənd Haqqında' %></h2>
-      <div class="about-text"><%= settings.about_text || 'Andurma kəndi haqqında məlumat tezliklə əlavə olunacaq.' %></div>
-      <div class="about-info-grid">
-        <div class="info-card">
-          <div class="info-icon">📍</div>
-          <h3>Yerləşmə</h3>
-          <p><%= settings.contact_address || 'Andurma kəndi, Lerik rayonu' %></p>
-        </div>
-        <div class="info-card">
-          <div class="info-icon">👥</div>
-          <h3>Əhali</h3>
-          <p><%= settings.stat_1_number || '2,500+' %> nəfər</p>
-        </div>
-        <div class="info-card">
-          <div class="info-icon">🏞️</div>
-          <h3>Sahə</h3>
-          <p><%= settings.stat_2_number || '45 km²' %></p>
-        </div>
-        <div class="info-card">
-          <div class="info-icon">🌳</div>
-          <h3>Görməli yerlər</h3>
-          <p><%= settings.stat_4_number || '10+' %> yer</p>
-        </div>
+    <% if (places && places.length > 0) { %>
+      <div class="gallery-grid-full">
+        <% places.forEach(item => { %>
+        <a href="/gormeli-yer/<%= item.id %>" class="gallery-card">
+          <% if (item.image) { %>
+            <img src="<%= item.image %>" alt="<%= item.title %>">
+          <% } else { %>
+            <div class="article-placeholder">🗺️</div>
+          <% } %>
+          <div class="gallery-card-info">
+            <h3><%= item.title %></h3>
+            <% if (item.location) { %><p>📍 <%= item.location %></p><% } %>
+            <p><%= (item.description || '').substring(0, 100) %>...</p>
+          </div>
+        </a>
+        <% }) %>
       </div>
-    </div>
+    <% } else { %>
+      <p class="empty-message">Hələ görməli yer yoxdur.</p>
+    <% } %>
   </div>
 </section>
 

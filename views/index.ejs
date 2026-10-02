@@ -5,27 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= settings.site_name || 'Andurma Kəndi' %> — Rəsmi Sayt</title>
   <meta name="description" content="Andurma kəndinin rəsmi informasiya portalı. Xəbərlər, görülən işlər, məqalələr, qalereya və daha çox.">
-  
-  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/css/style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <% if (gaId) { %>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=<%= gaId %>"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '<%= gaId %>');
+  </script>
+  <% } %>
 </head>
 <body>
 
-  <!-- ============ HEADER ============ -->
+  <!-- HEADER -->
   <header class="site-header">
     <div class="container header-inner">
       <a href="/" class="site-logo">
-        <% if (settings.logo) { %>
-          <img src="<%= settings.logo %>" alt="Logo" class="logo-img">
-        <% } %>
+        <% if (settings.logo) { %><img src="<%= settings.logo %>" alt="Logo" class="logo-img"><% } %>
         <div class="logo-text">
           <span class="logo-name"><%= settings.site_name || 'Andurma Kəndi' %></span>
-          <span class="logo-tagline">Qəbələ rayonu</span>
+          <span class="logo-tagline"><%= settings.site_tagline || 'QƏBƏLƏ RAYONU' %></span>
         </div>
       </a>
-      
       <nav class="main-nav" id="mainNav">
         <a href="/" class="active">Ana səhifə</a>
         <a href="/xeberler">Xəbərlər</a>
@@ -33,19 +38,15 @@
         <a href="/meqaleler">Məqalələr</a>
         <a href="/koshe">Köşə</a>
         <a href="/qalereya">Qalereya</a>
+        <a href="/gormeli-yerler">Görməli yerlər</a>
         <a href="/haqqinda">Haqqında</a>
         <a href="/elaqe">Əlaqə</a>
       </nav>
-      
-      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menyu">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menyu"><span></span><span></span><span></span></button>
     </div>
   </header>
 
-  <!-- ============ HERO ============ -->
+  <!-- HERO -->
   <section class="hero" <% if (settings.hero_image) { %>style="background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('<%= settings.hero_image %>');"<% } %>>
     <div class="hero-content">
       <h1 class="hero-title"><%= settings.hero_title || 'Andurma Kəndinə Xoş Gəldiniz' %></h1>
@@ -56,233 +57,172 @@
       </div>
     </div>
     <a href="#stats" class="hero-scroll" aria-label="Aşağı sürüşdür">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M7 13l5 5 5-5M7 6l5 5 5-5"/>
-      </svg>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"/></svg>
     </a>
   </section>
 
-  <!-- ============ STATİSTİKA ============ -->
+  <!-- STATİSTİKA -->
   <section class="stats-section" id="stats">
     <div class="container">
       <div class="stats-grid">
         <div class="stat-item">
-          <div class="stat-icon">👥</div>
-          <div class="stat-number">2,500+</div>
-          <div class="stat-label">Sakin</div>
+          <div class="stat-icon"><%= settings.stat_1_icon || '👥' %></div>
+          <div class="stat-number"><%= settings.stat_1_number || '2,500+' %></div>
+          <div class="stat-label"><%= settings.stat_1_label || 'Sakin' %></div>
         </div>
         <div class="stat-item">
-          <div class="stat-icon">🏞️</div>
-          <div class="stat-number">45 km²</div>
-          <div class="stat-label">Sahə</div>
+          <div class="stat-icon"><%= settings.stat_2_icon || '🏞️' %></div>
+          <div class="stat-number"><%= settings.stat_2_number || '45 km²' %></div>
+          <div class="stat-label"><%= settings.stat_2_label || 'Sahə' %></div>
         </div>
         <div class="stat-item">
-          <div class="stat-icon">🏫</div>
-          <div class="stat-number">150+</div>
-          <div class="stat-label">İl tarix</div>
+          <div class="stat-icon"><%= settings.stat_3_icon || '🏛️' %></div>
+          <div class="stat-number"><%= settings.stat_3_number || '150+' %></div>
+          <div class="stat-label"><%= settings.stat_3_label || 'İl Tarix' %></div>
         </div>
         <div class="stat-item">
-          <div class="stat-icon">🌳</div>
-          <div class="stat-number">10+</div>
-          <div class="stat-label">Görməli yer</div>
+          <div class="stat-icon"><%= settings.stat_4_icon || '🌳' %></div>
+          <div class="stat-number"><%= settings.stat_4_number || '10+' %></div>
+          <div class="stat-label"><%= settings.stat_4_label || 'Görməli yer' %></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ============ SON XƏBƏRLƏR ============ -->
+  <!-- SON XƏBƏRLƏR -->
   <section class="section">
     <div class="container">
       <div class="section-header">
-        <h2 class="section-title">
-          <span class="title-icon">📰</span>
-          Son Xəbərlər
-        </h2>
+        <h2 class="section-title"><span class="title-icon">📰</span> Son Xəbərlər</h2>
         <a href="/xeberler" class="see-all">Hamısına bax →</a>
       </div>
-      
       <% if (news && news.length > 0) { %>
         <div class="news-grid">
           <% news.slice(0, 4).forEach((item, index) => { %>
             <article class="news-card <%= index === 0 ? 'news-card-featured' : '' %>">
               <a href="/xeber/<%= item.id %>" class="news-card-link">
                 <div class="news-card-image">
-                  <% if (item.image) { %>
-                    <img src="<%= item.image %>" alt="<%= item.title %>">
-                  <% } else { %>
-                    <div class="news-placeholder">📰</div>
-                  <% } %>
+                  <% if (item.image) { %><img src="<%= item.image %>" alt="<%= item.title %>"><% } else { %><div class="news-placeholder">📰</div><% } %>
                   <span class="news-category cat-<%= item.category %>">
-                    <%= item.category === 'yol' ? '🛣️ Yol' : 
-                        item.category === 'mekteb' ? '🏫 Məktəb' : 
-                        item.category === 'su' ? '💧 Su' : 
-                        item.category === 'isiq' ? '⚡ İşıq' : 
-                        item.category === 'temizlik' ? '🧹 Təmizlik' : '📌 Digər' %>
+                    <%= item.category === 'yol' ? '🛣️ Yol' : item.category === 'mekteb' ? '🏫 Məktəb' : item.category === 'su' ? '💧 Su' : item.category === 'isiq' ? '⚡ İşıq' : item.category === 'temizlik' ? '🧹 Təmizlik' : '📌 Digər' %>
                   </span>
                 </div>
                 <div class="news-card-content">
                   <h3 class="news-card-title"><%= item.title %></h3>
-                  <p class="news-card-excerpt"><%= item.content.substring(0, 100) %>...</p>
+                  <p class="news-card-excerpt"><%= (item.content || '').substring(0, 100) %>...</p>
                   <div class="news-card-footer">
-                    <span class="news-date">
-                      📅 <%= new Date(item.created_at).toLocaleDateString('az-AZ') %>
-                    </span>
-                    <span class="news-stats">
-                      <span>👁️ <%= item.views || 0 %></span>
-                      <span>❤️ <%= item.likes || 0 %></span>
-                    </span>
+                    <span class="news-date">📅 <%= new Date(item.created_at).toLocaleDateString('az-AZ') %></span>
+                    <span class="news-stats"><span>👁️ <%= item.views || 0 %></span><span>❤️ <%= item.likes || 0 %></span></span>
                   </div>
                 </div>
               </a>
             </article>
           <% }) %>
         </div>
-      <% } else { %>
-        <p class="empty-message">Hələ xəbər yoxdur.</p>
-      <% } %>
+      <% } else { %><p class="empty-message">Hələ xəbər yoxdur.</p><% } %>
     </div>
   </section>
 
-  <!-- ============ GÖRÜLƏN İŞLƏR ============ -->
+  <!-- GÖRÜLƏN İŞLƏR -->
   <section class="section section-green">
     <div class="container">
       <div class="section-header">
-        <h2 class="section-title">
-          <span class="title-icon">🛠️</span>
-          Görülən İşlər
-        </h2>
+        <h2 class="section-title"><span class="title-icon">🛠️</span> Görülən İşlər</h2>
         <a href="/isler" class="see-all">Hamısına bax →</a>
       </div>
-      
       <div class="work-categories">
-        <a href="/isler/yol" class="work-card">
-          <div class="work-icon">🛣️</div>
-          <div class="work-info">
-            <h3>Yol İşləri</h3>
-            <p>Yeni yollar və təmir</p>
-          </div>
-        </a>
-        
-        <a href="/isler/mekteb" class="work-card">
-          <div class="work-icon">🏫</div>
-          <div class="work-info">
-            <h3>Məktəb</h3>
-            <p>Təhsil müəssisələri</p>
-          </div>
-        </a>
-        
-        <a href="/isler/su" class="work-card">
-          <div class="work-icon">💧</div>
-          <div class="work-info">
-            <h3>Su Təchizatı</h3>
-            <p>Su xətləri və quyular</p>
-          </div>
-        </a>
-        
-        <a href="/isler/isiq" class="work-card">
-          <div class="work-icon">⚡</div>
-          <div class="work-info">
-            <h3>İşıqlandırma</h3>
-            <p>Elektrik və işıq</p>
-          </div>
-        </a>
+        <a href="/isler/yol" class="work-card"><div class="work-icon">🛣️</div><div class="work-info"><h3>Yol İşləri</h3><p>Yeni yollar və təmir</p></div></a>
+        <a href="/isler/mekteb" class="work-card"><div class="work-icon">🏫</div><div class="work-info"><h3>Məktəb</h3><p>Təhsil müəssisələri</p></div></a>
+        <a href="/isler/su" class="work-card"><div class="work-icon">💧</div><div class="work-info"><h3>Su Təchizatı</h3><p>Su xətləri və quyular</p></div></a>
+        <a href="/isler/isiq" class="work-card"><div class="work-icon">⚡</div><div class="work-info"><h3>İşıqlandırma</h3><p>Elektrik və işıq</p></div></a>
       </div>
     </div>
   </section>
 
-  <!-- ============ SON MƏQALƏLƏR ============ -->
+  <!-- SON MƏQALƏLƏR -->
   <section class="section">
     <div class="container">
       <div class="section-header">
-        <h2 class="section-title">
-          <span class="title-icon">📝</span>
-          Son Məqalələr
-        </h2>
+        <h2 class="section-title"><span class="title-icon">📝</span> Son Məqalələr</h2>
         <a href="/meqaleler" class="see-all">Hamısına bax →</a>
       </div>
-      
       <% if (articles && articles.length > 0) { %>
         <div class="articles-grid">
           <% articles.slice(0, 3).forEach(item => { %>
             <article class="article-card">
               <a href="/meqale/<%= item.id %>">
-                <% if (item.image) { %>
-                  <img src="<%= item.image %>" alt="<%= item.title %>" class="article-image">
-                <% } else { %>
-                  <div class="article-placeholder">📝</div>
-                <% } %>
+                <% if (item.image) { %><img src="<%= item.image %>" alt="<%= item.title %>" class="article-image"><% } else { %><div class="article-placeholder">📝</div><% } %>
                 <div class="article-content">
                   <h3><%= item.title %></h3>
-                  <p><%= item.content.substring(0, 120) %>...</p>
-                  <div class="article-meta">
-                    <span>✍️ <%= item.author_name %></span>
-                    <span>👁️ <%= item.views || 0 %></span>
-                  </div>
+                  <p><%= (item.content || '').substring(0, 120) %>...</p>
+                  <div class="article-meta"><span>✍️ <%= item.author_name %></span><span>👁️ <%= item.views || 0 %></span></div>
                 </div>
               </a>
             </article>
           <% }) %>
         </div>
-      <% } else { %>
-        <p class="empty-message">Hələ məqalə yoxdur.</p>
-      <% } %>
+      <% } else { %><p class="empty-message">Hələ məqalə yoxdur.</p><% } %>
     </div>
   </section>
 
-  <!-- ============ QALEREYA PREVIEW ============ -->
+  <!-- QALEREYA -->
   <section class="section section-dark">
     <div class="container">
       <div class="section-header">
-        <h2 class="section-title">
-          <span class="title-icon">📸</span>
-          Qalereya
-        </h2>
+        <h2 class="section-title"><span class="title-icon">📸</span> Qalereya</h2>
         <a href="/qalereya" class="see-all">Hamısına bax →</a>
       </div>
-      
       <% if (gallery && gallery.length > 0) { %>
         <div class="gallery-preview">
           <% gallery.slice(0, 6).forEach(item => { %>
             <a href="/qalereya" class="gallery-item">
-              <% if (item.image) { %>
-                <img src="<%= item.image %>" alt="<%= item.title %>">
-              <% } else if (item.video) { %>
-                <div class="gallery-video">🎥</div>
-              <% } %>
-              <div class="gallery-overlay">
-                <span><%= item.title %></span>
+              <% if (item.image) { %><img src="<%= item.image %>" alt="<%= item.title %>"><% } else if (item.video) { %><div class="gallery-video">🎥</div><% } %>
+              <div class="gallery-overlay"><span><%= item.title %></span></div>
+            </a>
+          <% }) %>
+        </div>
+      <% } else { %><p class="empty-message">Hələ foto yoxdur.</p><% } %>
+    </div>
+  </section>
+
+  <!-- GÖRMƏLİ YERLƏR -->
+  <section class="section section-green">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title"><span class="title-icon">🗺️</span> Görməli Yerlər</h2>
+        <a href="/gormeli-yerler" class="see-all">Hamısına bax →</a>
+      </div>
+      <% if (places && places.length > 0) { %>
+        <div class="gallery-grid-full">
+          <% places.slice(0, 4).forEach(item => { %>
+            <a href="/gormeli-yer/<%= item.id %>" class="gallery-card">
+              <% if (item.image) { %><img src="<%= item.image %>" alt="<%= item.title %>"><% } else { %><div class="article-placeholder">🗺️</div><% } %>
+              <div class="gallery-card-info">
+                <h3><%= item.title %></h3>
+                <% if (item.location) { %><p>📍 <%= item.location %></p><% } %>
               </div>
             </a>
           <% }) %>
         </div>
-      <% } else { %>
-        <p class="empty-message">Hələ foto yoxdur.</p>
-      <% } %>
+      <% } else { %><p class="empty-message">Hələ görməli yer yoxdur.</p><% } %>
     </div>
   </section>
 
-  <!-- ============ XƏRİTƏ ============ -->
+  <!-- XƏRİTƏ -->
   <section class="section">
     <div class="container">
-      <h2 class="section-title">
-        <span class="title-icon">📍</span>
-        Kəndin Xəritədə Yeri
-      </h2>
-      
+      <h2 class="section-title"><span class="title-icon">📍</span> Kəndin Xəritədə Yeri</h2>
       <div class="map-container">
-        <iframe 
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3000!2d47.8!3d40.9!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDDCsDU0JzAwLjAiTiA0N8KwNDgnMDAuMCJF!5e0!3m2!1saz!2saz!4v1234567890"
-          width="100%" 
-          height="400" 
-          style="border:0; border-radius: 12px;" 
-          allowfullscreen="" 
-          loading="lazy">
-        </iframe>
+        <% if (settings.contact_map) { %>
+          <iframe src="<%= settings.contact_map %>" width="100%" height="400" style="border:0; border-radius: 12px;" allowfullscreen loading="lazy"></iframe>
+        <% } else { %>
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3000!2d47.8!3d40.9!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDDCsDU0JzAwLjAiTiA0N8KwNDgnMDAuMCJF!5e0!3m2!1saz!2saz!4v1234567890" width="100%" height="400" style="border:0; border-radius: 12px;" allowfullscreen loading="lazy"></iframe>
+        <% } %>
       </div>
     </div>
   </section>
 
-  <!-- ============ CTA - ƏLAQƏ ============ -->
+  <!-- CTA -->
   <section class="cta-section">
     <div class="container">
       <h2>Sualınız var?</h2>
@@ -291,56 +231,41 @@
     </div>
   </section>
 
-  <!-- ============ FOOTER ============ -->
+  <!-- FOOTER -->
   <footer class="site-footer">
     <div class="container">
       <div class="footer-grid">
         <div class="footer-column">
           <h3><%= settings.site_name || 'Andurma Kəndi' %></h3>
-          <p>Qəbələ rayonunun gözəl kəndi. Təbiət, tarix və mədəniyyət bir arada.</p>
+          <p><%= settings.about_text || 'Qəbələ rayonunun gözəl kəndi. Təbiət, tarix və mədəniyyət bir arada.' %></p>
         </div>
-        
         <div class="footer-column">
           <h4>Naviqasiya</h4>
           <ul>
             <li><a href="/">Ana səhifə</a></li>
             <li><a href="/xeberler">Xəbərlər</a></li>
             <li><a href="/isler">Görülən işlər</a></li>
+            <li><a href="/gormeli-yerler">Görməli yerlər</a></li>
             <li><a href="/haqqinda">Haqqında</a></li>
           </ul>
         </div>
-        
         <div class="footer-column">
           <h4>Əlaqə</h4>
           <ul>
-            <% if (settings.contact_address) { %>
-              <li>📍 <%= settings.contact_address %></li>
-            <% } %>
-            <% if (settings.contact_phone) { %>
-              <li>📞 <%= settings.contact_phone %></li>
-            <% } %>
-            <% if (settings.contact_email) { %>
-              <li>📧 <%= settings.contact_email %></li>
-            <% } %>
+            <% if (settings.contact_address) { %><li>📍 <%= settings.contact_address %></li><% } %>
+            <% if (settings.contact_phone) { %><li>📞 <%= settings.contact_phone %></li><% } %>
+            <% if (settings.contact_email) { %><li>📧 <%= settings.contact_email %></li><% } %>
           </ul>
         </div>
-        
         <div class="footer-column">
           <h4>Sosial Şəbəkələr</h4>
           <div class="social-links">
-            <% if (settings.social_facebook) { %>
-              <a href="<%= settings.social_facebook %>" target="_blank" title="Facebook">📘</a>
-            <% } %>
-            <% if (settings.social_instagram) { %>
-              <a href="<%= settings.social_instagram %>" target="_blank" title="Instagram">📸</a>
-            <% } %>
-            <% if (settings.social_youtube) { %>
-              <a href="<%= settings.social_youtube %>" target="_blank" title="YouTube">📺</a>
-            <% } %>
+            <% if (settings.social_facebook) { %><a href="<%= settings.social_facebook %>" target="_blank" title="Facebook">📘</a><% } %>
+            <% if (settings.social_instagram) { %><a href="<%= settings.social_instagram %>" target="_blank" title="Instagram">📸</a><% } %>
+            <% if (settings.social_youtube) { %><a href="<%= settings.social_youtube %>" target="_blank" title="YouTube">📺</a><% } %>
           </div>
         </div>
       </div>
-      
       <div class="footer-bottom">
         <p><%= settings.footer_text || '© 2026 Andurma Kəndi — Bütün hüquqlar qorunur.' %></p>
         <a href="/admin/login" class="admin-link">Admin girişi</a>
@@ -349,20 +274,15 @@
   </footer>
 
   <script>
-    // Mobil menyu
     document.getElementById('mobileMenuBtn').addEventListener('click', function() {
       document.getElementById('mainNav').classList.toggle('active');
       this.classList.toggle('active');
     });
-    
-    // Hero scroll
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function(e) {
         e.preventDefault();
         const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth' });
-        }
+        if (target) target.scrollIntoView({ behavior: 'smooth' });
       });
     });
   </script>

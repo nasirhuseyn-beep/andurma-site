@@ -3,110 +3,146 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Əlaqə — <%= settings.site_name || 'Andurma Kəndi' %></title>
-  <link rel="stylesheet" href="/style.css">
+  <title>Əlaqə - <%= settings.site_name || 'Andurma Kəndi' %></title>
+  <link rel="stylesheet" href="/css/style.css">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <% if (gaId) { %>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=<%= gaId %>"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '<%= gaId %>');
+  </script>
+  <% } %>
 </head>
 <body>
-  <header class="site-header">
-    <div class="container header-inner">
-      <a href="/" class="site-logo">
-        <div class="logo-text">
-          <span class="logo-name"><%= settings.site_name || 'Andurma Kəndi' %></span>
-          <span class="logo-tagline">Qəbələ rayonu</span>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="/" class="site-logo">
+      <% if (settings.logo) { %><img src="<%= settings.logo %>" alt="Logo" class="logo-img"><% } %>
+      <div class="logo-text">
+        <span class="logo-name"><%= settings.site_name || 'Andurma Kəndi' %></span>
+        <span class="logo-tagline"><%= settings.site_tagline || 'QƏBƏLƏ RAYONU' %></span>
+      </div>
+    </a>
+    <nav class="main-nav" id="mainNav">
+      <a href="/">Ana səhifə</a>
+      <a href="/xeberler">Xəbərlər</a>
+      <a href="/isler">Görülən işlər</a>
+      <a href="/meqaleler">Məqalələr</a>
+      <a href="/koshe">Köşə</a>
+      <a href="/qalereya">Qalereya</a>
+      <a href="/gormeli-yerler">Görməli yerlər</a>
+      <a href="/haqqinda">Haqqında</a>
+      <a href="/elaqe" class="active">Əlaqə</a>
+    </nav>
+    <button class="mobile-menu-btn" id="mobileMenuBtn"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<!-- PAGE HEADER -->
+<section class="page-header page-header-green">
+  <div class="container">
+    <h1>📞 Əlaqə</h1>
+    <p>Bizimlə əlaqə saxlayın</p>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="section">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="contact-info">
+        <h2>Əlaqə Məlumatları</h2>
+        <div class="contact-item">
+          <div class="contact-icon">📍</div>
+          <div><h4>Ünvan</h4><p><%= settings.contact_address || 'Andurma kəndi, Lerik rayonu' %></p></div>
         </div>
-      </a>
-      <nav class="main-nav" id="mainNav">
-        <a href="/">Ana səhifə</a>
-        <a href="/xeberler">Xəbərlər</a>
-        <a href="/isler">Görülən işlər</a>
-        <a href="/meqaleler">Məqalələr</a>
-        <a href="/koshe">Köşə</a>
-        <a href="/qalereya">Qalereya</a>
-        <a href="/haqqinda">Haqqında</a>
-        <a href="/elaqe" class="active">Əlaqə</a>
-      </nav>
-      <button class="mobile-menu-btn" id="mobileMenuBtn"><span></span><span></span><span></span></button>
-    </div>
-  </header>
-
-  <section class="page-header page-header-green">
-    <div class="container">
-      <h1>📞 Əlaqə</h1>
-      <p>Bizimlə əlaqə saxlayın</p>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <div class="contact-grid">
-        <div class="contact-info">
-          <h2>Əlaqə Məlumatları</h2>
-
-          <% if (settings.contact_address) { %>
-            <div class="contact-item">
-              <div class="contact-icon">📍</div>
-              <div>
-                <h4>Ünvan</h4>
-                <p><%= settings.contact_address %></p>
-              </div>
-            </div>
-          <% } %>
-
-          <% if (settings.contact_phone) { %>
-            <div class="contact-item">
-              <div class="contact-icon">📞</div>
-              <div>
-                <h4>Telefon</h4>
-                <p><%= settings.contact_phone %></p>
-              </div>
-            </div>
-          <% } %>
-
-          <% if (settings.contact_email) { %>
-            <div class="contact-item">
-              <div class="contact-icon">📧</div>
-              <div>
-                <h4>Email</h4>
-                <p><%= settings.contact_email %></p>
-              </div>
-            </div>
-          <% } %>
+        <% if (settings.contact_phone) { %>
+        <div class="contact-item">
+          <div class="contact-icon">📞</div>
+          <div><h4>Telefon</h4><p><%= settings.contact_phone %></p></div>
         </div>
+        <% } %>
+        <% if (settings.contact_email) { %>
+        <div class="contact-item">
+          <div class="contact-icon">✉️</div>
+          <div><h4>E-poçt</h4><p><%= settings.contact_email %></p></div>
+        </div>
+        <% } %>
+      </div>
+      <div class="contact-form-wrapper">
+        <h2>Mesaj Göndərin</h2>
+        <% if (sent) { %><div class="ok">✅ Mesajınız uğurla göndərildi! Tezliklə sizinlə əlaqə saxlayacağıq.</div><% } %>
+        <form method="POST" action="/elaqe" class="contact-form">
+          <input type="text" name="name" placeholder="Adınız *" required>
+          <input type="tel" name="phone" placeholder="Telefon">
+          <input type="email" name="email" placeholder="Email">
+          <textarea name="message" rows="5" placeholder="Mesajınız *" required></textarea>
+          <button type="submit" class="btn btn-primary">Göndər</button>
+        </form>
+      </div>
+    </div>
+    <% if (settings.contact_map) { %>
+    <div class="map-container" style="margin-top: 48px;">
+      <iframe src="<%= settings.contact_map %>" width="100%" height="450" style="border:0; border-radius: 12px;" allowfullscreen="" loading="lazy"></iframe>
+    </div>
+    <% } %>
+  </div>
+</section>
 
-        <div class="contact-form-wrapper">
-          <h2>Mesaj Göndərin</h2>
-
-          <% if (typeof sent !== 'undefined' && sent) { %>
-            <p class="ok">✅ Mesajınız göndərildi! Tezliklə əlaqə saxlayacağıq.</p>
-          <% } %>
-
-          <form method="POST" action="/elaqe" class="contact-form">
-            <input type="text" name="name" placeholder="Adınız *" required>
-            <input type="tel" name="phone" placeholder="Telefon">
-            <input type="email" name="email" placeholder="Email">
-            <textarea name="message" rows="6" placeholder="Mesajınız *" required></textarea>
-            <button type="submit" class="btn btn-primary">Göndər</button>
-          </form>
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-column">
+        <h3><%= settings.site_name || 'Andurma Kəndi' %></h3>
+        <p><%= settings.about_text || 'Yaşıl təbiətin qoynunda bir kənd.' %></p>
+      </div>
+      <div class="footer-column">
+        <h4>Keçidlər</h4>
+        <ul>
+          <li><a href="/">Ana səhifə</a></li>
+          <li><a href="/xeberler">Xəbərlər</a></li>
+          <li><a href="/meqaleler">Məqalələr</a></li>
+          <li><a href="/elaqe">Əlaqə</a></li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h4>Əlaqə</h4>
+        <p>📍 <%= settings.contact_address || 'Andurma kəndi, Lerik rayonu' %></p>
+        <% if (settings.contact_phone) { %><p>📞 <%= settings.contact_phone %></p><% } %>
+        <% if (settings.contact_email) { %><p>✉️ <%= settings.contact_email %></p><% } %>
+      </div>
+      <div class="footer-column">
+        <h4>Sosial Şəbəkələr</h4>
+        <div class="social-links">
+          <% if (settings.social_facebook) { %><a href="<%= settings.social_facebook %>" target="_blank">📘</a><% } %>
+          <% if (settings.social_instagram) { %><a href="<%= settings.social_instagram %>" target="_blank">📷</a><% } %>
+          <% if (settings.social_youtube) { %><a href="<%= settings.social_youtube %>" target="_blank">📺</a><% } %>
         </div>
       </div>
     </div>
-  </section>
-
-  <footer class="site-footer">
-    <div class="container">
-      <div class="footer-bottom">
-        <p><%= settings.footer_text || '© 2026 Andurma Kəndi' %></p>
-        <a href="/admin/login" class="admin-link">Admin girişi</a>
-      </div>
+    <div class="footer-bottom">
+      <p><%= settings.footer_text || '© 2026 Andurma Kəndi — Bütün hüquqlar qorunur.' %></p>
+      <a href="/admin/login" class="admin-link">Admin Panel</a>
     </div>
-  </footer>
+  </div>
+</footer>
 
-  <script>
-    document.getElementById('mobileMenuBtn')?.addEventListener('click', function() {
-      document.getElementById('mainNav').classList.toggle('active');
-      this.classList.toggle('active');
+<script>
+  const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+  const mainNav = document.getElementById('mainNav');
+  if (mobileMenuBtn) {
+    mobileMenuBtn.addEventListener('click', () => {
+      mainNav.classList.toggle('active');
+      mobileMenuBtn.classList.toggle('active');
     });
-  </script>
+  }
+</script>
+
 </body>
 </html>

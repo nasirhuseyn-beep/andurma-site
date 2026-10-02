@@ -2,64 +2,61 @@
 <html lang="az">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mesajlar — Admin Panel</title>
-  <link rel="stylesheet" href="/style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <title>Mesajlar - Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  <div class="admin-wrap">
-    <aside class="admin-sidebar">
-      <div class="admin-brand">🌿 Andurma</div>
-      <a href="/admin">📊 Dashboard</a>
-      <a href="/admin/news">📰 Xəbərlər</a>
-      <a href="/admin/articles">📝 Məqalələr</a>
-      <a href="/admin/koshe">✍️ Köşə</a>
-      <a href="/admin/gallery">📸 Qalereya</a>
-      <a href="/admin/comments">💬 Şərhlər</a>
-      <a href="/admin/messages" class="active">📧 Mesajlar</a>
-      <% if (user && user.role === 'super_admin') { %>
-        <a href="/admin/users">👥 İstifadəçilər</a>
-        <a href="/admin/settings">⚙️ Sazlamalar</a>
-      <% } %>
-      <a href="/admin/password">🔒 Şifrə</a>
-      <a href="/" target="_blank">🌐 Sayta bax</a>
-      <a href="/admin/logout">🚪 Çıxış</a>
-    </aside>
-
-    <main class="admin-main">
-      <h1>📧 Əlaqə Mesajları</h1>
-
-      <% if (messages.length === 0) { %>
-        <p class="empty-message">Hələ mesaj yoxdur.</p>
-      <% } else { %>
-        <div class="messages-list">
-          <% messages.forEach(m => { %>
-            <div class="message-card <%= m.read ? 'message-read' : '' %>">
-              <div class="message-header">
-                <div>
-                  <strong><%= m.name %></strong>
-                  <% if (m.phone) { %><span>📞 <%= m.phone %></span><% } %>
-                  <% if (m.email) { %><span>📧 <%= m.email %></span><% } %>
-                </div>
-                <small><%= new Date(m.created_at).toLocaleString('az-AZ') %></small>
-              </div>
-              <p class="message-text"><%= m.message %></p>
-              <div class="message-actions">
-                <% if (!m.read) { %>
-                  <form method="POST" action="/admin/messages/read/<%= m.id %>" style="display:inline;">
-                    <button class="btn btn-sm btn-success">✅ Oxundu</button>
-                  </form>
-                <% } %>
-                <form method="POST" action="/admin/messages/delete/<%= m.id %>" style="display:inline;">
-                  <button class="btn btn-sm btn-danger" onclick="return confirm('Silmək?');">🗑️ Sil</button>
-                </form>
-              </div>
-            </div>
-          <% }) %>
+<div class="admin-wrap">
+  <aside class="admin-sidebar">
+    <div class="admin-brand">🌿 Andurma</div>
+    <a href="/admin">📊 Dashboard</a>
+    <a href="/admin/news">📰 Xəbərlər</a>
+    <a href="/admin/articles">📝 Məqalələr</a>
+    <a href="/admin/koshe">✍️ Köşə</a>
+    <a href="/admin/gallery">🖼️ Qalereya</a>
+    <a href="/admin/places">🗺️ Görməli Yerlər</a>
+    <a href="/admin/comments">💬 Şərhlər</a>
+    <a href="/admin/messages" class="active">📧 Mesajlar</a>
+    <a href="/admin/users">👥 İstifadəçilər</a>
+    <a href="/admin/settings">⚙️ Sazlamalar</a>
+    <a href="/admin/password">🔒 Şifrə</a>
+    <a href="/" target="_blank">🌐 Sayta bax</a>
+    <a href="/admin/logout">🚪 Çıxış</a>
+  </aside>
+  <main class="admin-main">
+    <div class="admin-header">
+      <h1>📧 Mesajlar</h1>
+    </div>
+    <% if (messages && messages.length > 0) { %>
+    <div class="messages-list">
+      <% messages.forEach(item => { %>
+      <div class="message-card <%= item.read ? 'message-read' : '' %>">
+        <div class="message-header">
+          <div>
+            <strong><%= item.name %></strong>
+            <% if (item.phone) { %><span>📞 <%= item.phone %></span><% } %>
+            <% if (item.email) { %><span>✉️ <%= item.email %></span><% } %>
+          </div>
+          <span><%= new Date(item.created_at).toLocaleDateString('az-AZ') %></span>
         </div>
-      <% } %>
-    </main>
-  </div>
+        <p class="message-text"><%= item.message %></p>
+        <div class="message-actions">
+          <% if (!item.read) { %>
+          <form method="POST" action="/admin/messages/read/<%= item.id %>" style="display:inline;">
+            <button type="submit" class="btn btn-sm btn-success">✅ Oxundu</button>
+          </form>
+          <% } %>
+          <form method="POST" action="/admin/messages/delete/<%= item.id %>" style="display:inline;" onsubmit="return confirm('Əminsiniz?')">
+            <button type="submit" class="btn btn-sm btn-danger">🗑️ Sil</button>
+          </form>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+    <% } else { %>
+      <p class="empty-message">Hələ mesaj yoxdur.</p>
+    <% } %>
+  </main>
+</div>
 </body>
 </html>
