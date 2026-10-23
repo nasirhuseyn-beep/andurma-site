@@ -110,8 +110,10 @@ async function initDatabase() {
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
+app.get('/css/style.css', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'css', 'style.css'));
+});
 app.use(session({
   secret: process.env.SESSION_SECRET || 'andurma-secret-key-2026',
   resave: false,
