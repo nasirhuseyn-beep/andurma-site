@@ -20,6 +20,10 @@ module.exports = (db) => {
     });
   });
 
+  router.post('/', (req, res) => {
+    res.redirect('/');
+  });
+
   // XƏBƏRLƏR
   router.get('/xeberler', (req, res) => {
     db.all('SELECT * FROM news ORDER BY created_at DESC', (err, news) => {
