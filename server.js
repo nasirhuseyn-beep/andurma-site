@@ -135,14 +135,18 @@ app.use('/', require('./routes/public')(db));
 app.use('/admin', require('./routes/admin')(db));
 
 const PORT = process.env.PORT || 3000;
-initDatabase().then(() => {
-  app.listen(PORT, () => {
-    console.log('=================================');
-    console.log('✅ Andurma saytı işləyir: http://localhost:' + PORT);
-    console.log('🔐 Admin: http://localhost:' + PORT + '/admin/login');
-    console.log('👤 Super Admin: admin / admin123');
-    console.log('📊 Database: PostgreSQL (Supabase)');
-    console.log('📦 Storage: Supabase Storage');
-    console.log('=================================');
+if (!process.env.VERCEL) {
+  initDatabase().then(() => {
+    app.listen(PORT, () => {
+      console.log('=================================');
+      console.log('✅ Andurma saytı işləyir: http://localhost:' + PORT);
+      console.log('🔐 Admin: http://localhost:' + PORT + '/admin/login');
+      console.log('👤 Super Admin: admin / admin123');
+      console.log('📊 Database: PostgreSQL (Supabase)');
+      console.log('📦 Storage: Supabase Storage');
+      console.log('=================================');
+    });
   });
-});
+}
+
+module.exports = app;
