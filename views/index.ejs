@@ -154,7 +154,7 @@
                 <% if (item.image) { %><img src="<%= item.image %>" alt="<%= item.title %>" class="article-image"><% } else { %><div class="article-placeholder">📝</div><% } %>
                 <div class="article-content">
                   <h3><%= item.title %></h3>
-                  <p><%= (item.content || '').substring(0, 120) %>...</p>
+                  <p><%= stripHtml(item.content).substring(0, 120) %>...</p>
                   <div class="article-meta"><span>✍️ <%= item.author_name %></span><span>👁️ <%= item.views || 0 %></span></div>
                 </div>
               </a>
