@@ -68,7 +68,7 @@
     </div>
     <% } } %>
 
-    <div class="single-text"><%- article.content %></div>
+    <div class="single-text"><%- renderContent(article.content) %></div>
 
     <div class="like-section">
       <button class="like-btn" onclick="likeArticle(<%= article.id %>)">

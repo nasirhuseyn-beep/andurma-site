@@ -2,8 +2,15 @@
 <html lang="az">
 <head>
   <meta charset="UTF-8">
-  <title><%= news ? 'Xəbəri Redaktə Et' : 'Yeni Xəbər' %> - Admin</title>
+  <title><%= news && news.id ? 'Xəbəri Redaktə Et' : 'Yeni Xəbər' %> - Admin</title>
   <link rel="stylesheet" href="/css/style.css">
+  <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
+  <style>
+    .ql-container { font-size: 15px; min-height: 220px; }
+    .ql-editor { min-height: 220px; }
+    .ql-toolbar { border-radius: 6px 6px 0 0; }
+    .ql-container { border-radius: 0 0 6px 6px; }
+  </style>
 </head>
 <body>
 <div class="admin-wrap">
@@ -25,9 +32,14 @@
   </aside>
   <main class="admin-main">
     <div class="admin-header">
-      <h1><%= news ? '✏️ Xəbəri Redaktə Et' : '➕ Yeni Xəbər' %></h1>
+      <h1><%= news && news.id ? '✏️ Xəbəri Redaktə Et' : '➕ Yeni Xəbər' %></h1>
     </div>
-    <form method="POST" action="<%= news ? '/admin/news/edit/' + news.id : '/admin/news/new' %>" enctype="multipart/form-data" class="post-form">
+    <% if (typeof error !== 'undefined' && error) { %>
+    <div class="alert-error" style="background:#fdecea;color:#b3261e;border:1px solid #f5c6c3;padding:12px 16px;border-radius:8px;margin-bottom:16px;">
+      ⚠️ <%= error %>
+    </div>
+    <% } %>
+    <form id="newsForm" method="POST" action="<%= news && news.id ? '/admin/news/edit/' + news.id : '/admin/news/new' %>" enctype="multipart/form-data" class="post-form">
       <div class="form-group">
         <label>Başlıq</label>
         <input type="text" name="title" value="<%= news ? news.title : '' %>" required>
@@ -45,11 +57,19 @@
       </div>
       <div class="form-group">
         <label>Mətn</label>
-        <textarea name="content" rows="8" required><%= news ? news.content : '' %></textarea>
+        <!-- Gizli input - Quill məzmunu buraya yazılacaq -->
+        <input type="hidden" name="content" id="hiddenContent" value="">
+        <!-- Quill editor -->
+        <div id="quillEditor"></div>
       </div>
       <div class="form-group">
         <label>Yer</label>
-        <input type="text" name="location" value="<%= news ? news.location : '' %>">
+        <input type="text" name="location" value="<%= news ? news.location || '' : '' %>">
+      </div>
+      <div class="form-group">
+        <label>🎬 YouTube Linki (istəyə bağlı)</label>
+        <input type="text" name="youtube_url" value="<%= news && news.youtube_url ? news.youtube_url : '' %>" placeholder="https://www.youtube.com/watch?v=...">
+        <small style="color:#888">Tam YouTube linkini yapışdırın. Video xəbər səhifəsində göstəriləcək.</small>
       </div>
       <div class="form-group">
         <label>Şəkil</label>
@@ -59,7 +79,7 @@
         <% } %>
       </div>
       <div class="form-group">
-        <label>Video</label>
+        <label>Video faylı</label>
         <input type="file" name="video" accept="video/*">
         <% if (news && news.video) { %>
         <div class="current-file"><video src="<%= news.video %>" controls></video><small>Cari video</small></div>
@@ -72,5 +92,50 @@
     </form>
   </main>
 </div>
+
+<!-- Quill Editor JS -->
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+<script>
+  var quill = new Quill('#quillEditor', {
+    theme: 'snow',
+    placeholder: 'Xəbər mətnini buraya yazın...',
+    modules: {
+      toolbar: [
+        [{ 'header': [1, 2, 3, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ 'color': [] }, { 'background': [] }],
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        [{ 'align': [] }],
+        ['blockquote'],
+        ['link'],
+        ['clean']
+      ]
+    }
+  });
+
+  <% if (news && news.content) { %>
+  try {
+    quill.root.innerHTML = <%- JSON.stringify(news.content).replace(/</g, '\\u003c') %>;
+  } catch(e) {
+    console.error('Quill load error:', e);
+  }
+  <% } %>
+
+  function syncQuill() {
+    var html = quill.root.innerHTML;
+    if (html === '<p><br></p>') html = '';
+    document.getElementById('hiddenContent').value = html;
+  }
+
+  quill.on('text-change', syncQuill);
+
+  document.getElementById('newsForm').addEventListener('submit', function(e) {
+    syncQuill();
+    if (!document.getElementById('hiddenContent').value.trim()) {
+      e.preventDefault();
+      alert('Xəbər mətni boş ola bilməz.');
+    }
+  });
+</script>
 </body>
 </html>

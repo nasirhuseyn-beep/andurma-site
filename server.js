@@ -70,6 +70,8 @@ async function initDatabase() {
     await pool.query(`ALTER TABLE places ADD COLUMN IF NOT EXISTS youtube_link TEXT`);
     await pool.query(`ALTER TABLE places ADD COLUMN IF NOT EXISTS likes INTEGER DEFAULT 0`);
     await pool.query(`ALTER TABLE articles ADD COLUMN IF NOT EXISTS youtube_url TEXT`);
+    await pool.query(`ALTER TABLE news ADD COLUMN IF NOT EXISTS youtube_url TEXT`);
+    await pool.query(`ALTER TABLE koshe ADD COLUMN IF NOT EXISTS youtube_url TEXT`);
 
     const defaultSettings = [
       ['site_name', 'Andurma Kəndi'],
@@ -129,6 +131,20 @@ function stripHtml(html) {
     .trim();
 }
 app.locals.stripHtml = stripHtml;
+
+// Məzmun göstərmə: HTML-dirsə olduğu kimi, düz mətndirsə sətir keçidləri qorunaraq
+function escapeHtml(text) {
+  return String(text)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+function renderContent(html) {
+  if (!html) return '';
+  const s = String(html);
+  if (/<\/?[a-z][\s\S]*>/i.test(s)) return s;           // HTML məzmun
+  return escapeHtml(s).replace(/\r?\n/g, '<br>');        // köhnə düz mətn
+}
+app.locals.renderContent = renderContent;
 
 // ---------- MIDDLEWARE ----------
 app.set('view engine', 'ejs');

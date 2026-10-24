@@ -109,7 +109,7 @@
                 </div>
                 <div class="news-card-content">
                   <h3 class="news-card-title"><%= item.title %></h3>
-                  <p class="news-card-excerpt"><%= (item.content || '').substring(0, 100) %>...</p>
+                  <p class="news-card-excerpt"><%= stripHtml(item.content).substring(0, 100) %>...</p>
                   <div class="news-card-footer">
                     <span class="news-date">📅 <%= new Date(item.created_at).toLocaleDateString('az-AZ') %></span>
                     <span class="news-stats"><span>👁️ <%= item.views || 0 %></span><span>❤️ <%= item.likes || 0 %></span></span>

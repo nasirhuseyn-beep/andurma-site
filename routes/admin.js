@@ -140,12 +140,27 @@ module.exports = (db) => {
   });
   router.get('/news/new', requireAuth, (req, res) => { res.render('admin/news-form', { news: null }); });
   router.post('/news/new', requireAuth, upload.fields([{ name: 'image' }, { name: 'video' }]), async (req, res) => {
-    const { title, category, content, location } = req.body;
-    const image = req.files?.image ? await uploadToSupabase(req.supabase, req.files.image[0], 'news') : null;
-    const video = req.files?.video ? await uploadToSupabase(req.supabase, req.files.video[0], 'news') : null;
-    db.run('INSERT INTO news (title, category, content, location, image, video, author_id, author_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      [title, category, content, location, image, video, req.session.user.id, req.session.user.full_name || req.session.user.username],
-      () => res.redirect('/admin/news'));
+    const { title, category, content, location, youtube_url } = req.body;
+    const back = (msg) => res.status(500).render('admin/news-form', {
+      news: { id: null, title, category, content, location, youtube_url, image: null, video: null }, error: msg
+    });
+    if (!title || !title.trim()) return back('Başlıq boş ola bilməz.');
+    try {
+      const image = req.files?.image ? await uploadToSupabase(req.supabase, req.files.image[0], 'news') : null;
+      const video = req.files?.video ? await uploadToSupabase(req.supabase, req.files.video[0], 'news') : null;
+      db.run('INSERT INTO news (title, category, content, location, image, video, youtube_url, author_id, author_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        [title, category, content, location, image, video, youtube_url || null, req.session.user.id, req.session.user.full_name || req.session.user.username],
+        (err) => {
+          if (err) {
+            console.error('News INSERT xətası:', err.message);
+            return back('Xəbər yazılmadı: ' + err.message);
+          }
+          res.redirect('/admin/news');
+        });
+    } catch (e) {
+      console.error('News save xətası:', e.message);
+      return back('Xəta: ' + e.message);
+    }
   });
   router.get('/news/edit/:id', requireAuth, (req, res) => {
     db.get('SELECT * FROM news WHERE id = ?', [req.params.id], (err, news) => {
@@ -155,14 +170,25 @@ module.exports = (db) => {
     });
   });
   router.post('/news/edit/:id', requireAuth, upload.fields([{ name: 'image' }, { name: 'video' }]), async (req, res) => {
-    const { title, category, content, location } = req.body;
+    const { title, category, content, location, youtube_url } = req.body;
     db.get('SELECT * FROM news WHERE id = ?', [req.params.id], async (err, old) => {
       if (!old) return res.redirect('/admin/news');
       if (req.session.user.role !== 'super_admin' && old.author_id !== req.session.user.id) return res.status(403).send('Icaze yoxdur');
-      const image = req.files?.image ? await uploadToSupabase(req.supabase, req.files.image[0], 'news') : old.image;
-      const video = req.files?.video ? await uploadToSupabase(req.supabase, req.files.video[0], 'news') : old.video;
-      db.run('UPDATE news SET title=?, category=?, content=?, location=?, image=?, video=? WHERE id=?',
-        [title, category, content, location, image, video, req.params.id], () => res.redirect('/admin/news'));
+      try {
+        const image = req.files?.image ? await uploadToSupabase(req.supabase, req.files.image[0], 'news') : old.image;
+        const video = req.files?.video ? await uploadToSupabase(req.supabase, req.files.video[0], 'news') : old.video;
+        db.run('UPDATE news SET title=?, category=?, content=?, location=?, image=?, video=?, youtube_url=? WHERE id=?',
+          [title, category, content, location, image, video, youtube_url || null, req.params.id], (err2) => {
+            if (err2) {
+              console.error('News UPDATE xətası:', err2.message);
+              return res.status(500).render('admin/news-form', { news: { ...old, title, category, content, location, youtube_url }, error: 'Yenilənmədi: ' + err2.message });
+            }
+            res.redirect('/admin/news');
+          });
+      } catch (e) {
+        console.error('News update xətası:', e.message);
+        return res.status(500).render('admin/news-form', { news: { ...old, title, category, content, location, youtube_url }, error: 'Xəta: ' + e.message });
+      }
     });
   });
   router.post('/news/delete/:id', requireAuth, (req, res) => {
@@ -249,11 +275,26 @@ module.exports = (db) => {
   });
   router.get('/koshe/new', requireAuth, (req, res) => { res.render('admin/koshe-form', { koshe: null }); });
   router.post('/koshe/new', requireAuth, upload.single('image'), async (req, res) => {
-    const { title, content } = req.body;
-    const image = req.file ? await uploadToSupabase(req.supabase, req.file, 'koshe') : null;
-    db.run('INSERT INTO koshe (title, content, image, author_id, author_name) VALUES (?, ?, ?, ?, ?)',
-      [title, content, image, req.session.user.id, req.session.user.full_name || req.session.user.username],
-      () => res.redirect('/admin/koshe'));
+    const { title, content, youtube_url } = req.body;
+    const back = (msg) => res.status(500).render('admin/koshe-form', {
+      koshe: { id: null, title, content, youtube_url, image: null }, error: msg
+    });
+    if (!title || !title.trim()) return back('Başlıq boş ola bilməz.');
+    try {
+      const image = req.file ? await uploadToSupabase(req.supabase, req.file, 'koshe') : null;
+      db.run('INSERT INTO koshe (title, content, image, youtube_url, author_id, author_name) VALUES (?, ?, ?, ?, ?, ?)',
+        [title, content, image, youtube_url || null, req.session.user.id, req.session.user.full_name || req.session.user.username],
+        (err) => {
+          if (err) {
+            console.error('Koshe INSERT xətası:', err.message);
+            return back('Köşə yazısı yazılmadı: ' + err.message);
+          }
+          res.redirect('/admin/koshe');
+        });
+    } catch (e) {
+      console.error('Koshe save xətası:', e.message);
+      return back('Xəta: ' + e.message);
+    }
   });
   router.get('/koshe/edit/:id', requireAuth, (req, res) => {
     db.get('SELECT * FROM koshe WHERE id = ?', [req.params.id], (err, koshe) => {
@@ -263,12 +304,24 @@ module.exports = (db) => {
     });
   });
   router.post('/koshe/edit/:id', requireAuth, upload.single('image'), async (req, res) => {
-    const { title, content } = req.body;
+    const { title, content, youtube_url } = req.body;
     db.get('SELECT * FROM koshe WHERE id = ?', [req.params.id], async (err, old) => {
       if (!old) return res.redirect('/admin/koshe');
       if (req.session.user.role !== 'super_admin' && old.author_id !== req.session.user.id) return res.status(403).send('Icaze yoxdur');
-      const image = req.file ? await uploadToSupabase(req.supabase, req.file, 'koshe') : old.image;
-      db.run('UPDATE koshe SET title=?, content=?, image=? WHERE id=?', [title, content, image, req.params.id], () => res.redirect('/admin/koshe'));
+      try {
+        const image = req.file ? await uploadToSupabase(req.supabase, req.file, 'koshe') : old.image;
+        db.run('UPDATE koshe SET title=?, content=?, image=?, youtube_url=? WHERE id=?',
+          [title, content, image, youtube_url || null, req.params.id], (err2) => {
+            if (err2) {
+              console.error('Koshe UPDATE xətası:', err2.message);
+              return res.status(500).render('admin/koshe-form', { koshe: { ...old, title, content, youtube_url }, error: 'Yenilənmədi: ' + err2.message });
+            }
+            res.redirect('/admin/koshe');
+          });
+      } catch (e) {
+        console.error('Koshe update xətası:', e.message);
+        return res.status(500).render('admin/koshe-form', { koshe: { ...old, title, content, youtube_url }, error: 'Xəta: ' + e.message });
+      }
     });
   });
   router.post('/koshe/delete/:id', requireAuth, (req, res) => {

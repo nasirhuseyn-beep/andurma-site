@@ -56,7 +56,17 @@
 
     <% if (koshe.image) { %><img src="<%= koshe.image %>" alt="<%= koshe.title %>" class="single-image"><% } %>
 
-    <div class="single-text"><%= koshe.content %></div>
+    <% if (koshe.youtube_url) {
+      const ytMatch = koshe.youtube_url.match(/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/);
+      if (ytMatch) { %>
+    <div style="margin: 24px 0; position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:10px;">
+      <iframe src="https://www.youtube.com/embed/<%= ytMatch[1] %>"
+        style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;"
+        allowfullscreen loading="lazy"></iframe>
+    </div>
+    <% } } %>
+
+    <div class="single-text"><%- renderContent(koshe.content) %></div>
 
     <div class="like-section">
       <button class="like-btn" onclick="likeKoshe(<%= koshe.id %>)">

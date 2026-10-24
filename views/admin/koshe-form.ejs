@@ -2,8 +2,15 @@
 <html lang="az">
 <head>
   <meta charset="UTF-8">
-  <title><%= koshe ? 'Köşə Yazısını Redaktə Et' : 'Yeni Köşə Yazısı' %> - Admin</title>
+  <title><%= koshe && koshe.id ? 'Köşə Yazısını Redaktə Et' : 'Yeni Köşə Yazısı' %> - Admin</title>
   <link rel="stylesheet" href="/css/style.css">
+  <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
+  <style>
+    .ql-container { font-size: 15px; min-height: 220px; }
+    .ql-editor { min-height: 220px; }
+    .ql-toolbar { border-radius: 6px 6px 0 0; }
+    .ql-container { border-radius: 0 0 6px 6px; }
+  </style>
 </head>
 <body>
 <div class="admin-wrap">
@@ -25,16 +32,29 @@
   </aside>
   <main class="admin-main">
     <div class="admin-header">
-      <h1><%= koshe ? '✏️ Köşə Yazısını Redaktə Et' : '➕ Yeni Köşə Yazısı' %></h1>
+      <h1><%= koshe && koshe.id ? '✏️ Köşə Yazısını Redaktə Et' : '➕ Yeni Köşə Yazısı' %></h1>
     </div>
-    <form method="POST" action="<%= koshe ? '/admin/koshe/edit/' + koshe.id : '/admin/koshe/new' %>" enctype="multipart/form-data" class="post-form">
+    <% if (typeof error !== 'undefined' && error) { %>
+    <div class="alert-error" style="background:#fdecea;color:#b3261e;border:1px solid #f5c6c3;padding:12px 16px;border-radius:8px;margin-bottom:16px;">
+      ⚠️ <%= error %>
+    </div>
+    <% } %>
+    <form id="kosheForm" method="POST" action="<%= koshe && koshe.id ? '/admin/koshe/edit/' + koshe.id : '/admin/koshe/new' %>" enctype="multipart/form-data" class="post-form">
       <div class="form-group">
         <label>Başlıq</label>
         <input type="text" name="title" value="<%= koshe ? koshe.title : '' %>" required>
       </div>
       <div class="form-group">
         <label>Mətn</label>
-        <textarea name="content" rows="12" required><%= koshe ? koshe.content : '' %></textarea>
+        <!-- Gizli input - Quill məzmunu buraya yazılacaq -->
+        <input type="hidden" name="content" id="hiddenContent" value="">
+        <!-- Quill editor -->
+        <div id="quillEditor"></div>
+      </div>
+      <div class="form-group">
+        <label>🎬 YouTube Linki (istəyə bağlı)</label>
+        <input type="text" name="youtube_url" value="<%= koshe && koshe.youtube_url ? koshe.youtube_url : '' %>" placeholder="https://www.youtube.com/watch?v=...">
+        <small style="color:#888">Tam YouTube linkini yapışdırın. Video köşə yazısının səhifəsində göstəriləcək.</small>
       </div>
       <div class="form-group">
         <label>Şəkil</label>
@@ -50,5 +70,50 @@
     </form>
   </main>
 </div>
+
+<!-- Quill Editor JS -->
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+<script>
+  var quill = new Quill('#quillEditor', {
+    theme: 'snow',
+    placeholder: 'Köşə yazısının mətnini buraya yazın...',
+    modules: {
+      toolbar: [
+        [{ 'header': [1, 2, 3, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ 'color': [] }, { 'background': [] }],
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        [{ 'align': [] }],
+        ['blockquote'],
+        ['link'],
+        ['clean']
+      ]
+    }
+  });
+
+  <% if (koshe && koshe.content) { %>
+  try {
+    quill.root.innerHTML = <%- JSON.stringify(koshe.content).replace(/</g, '\\u003c') %>;
+  } catch(e) {
+    console.error('Quill load error:', e);
+  }
+  <% } %>
+
+  function syncQuill() {
+    var html = quill.root.innerHTML;
+    if (html === '<p><br></p>') html = '';
+    document.getElementById('hiddenContent').value = html;
+  }
+
+  quill.on('text-change', syncQuill);
+
+  document.getElementById('kosheForm').addEventListener('submit', function(e) {
+    syncQuill();
+    if (!document.getElementById('hiddenContent').value.trim()) {
+      e.preventDefault();
+      alert('Köşə yazısının mətni boş ola bilməz.');
+    }
+  });
+</script>
 </body>
 </html>

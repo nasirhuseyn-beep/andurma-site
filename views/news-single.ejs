@@ -58,7 +58,17 @@
     <% if (news.image) { %><img src="<%= news.image %>" alt="<%= news.title %>" class="single-image"><% } %>
     <% if (news.video) { %><video src="<%= news.video %>" controls class="single-video"></video><% } %>
 
-    <div class="single-text"><%= news.content %></div>
+    <% if (news.youtube_url) {
+      const ytMatch = news.youtube_url.match(/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/);
+      if (ytMatch) { %>
+    <div style="margin: 24px 0; position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:10px;">
+      <iframe src="https://www.youtube.com/embed/<%= ytMatch[1] %>"
+        style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;"
+        allowfullscreen loading="lazy"></iframe>
+    </div>
+    <% } } %>
+
+    <div class="single-text"><%- renderContent(news.content) %></div>
 
     <% if (news.location) { %>
       <div class="single-location">📍 <strong>Yer:</strong> <%= news.location %></div>
