@@ -42,10 +42,10 @@
       </div>
       <div class="form-group">
         <label>Mətn</label>
-        <!-- Quill editor görünəcək bu div-də -->
-        <div id="quillEditor"><%= article ? article.content : '' %></div>
-        <!-- Gizli textarea formla göndəriləcək -->
-        <textarea name="content" id="hiddenContent" style="display:none;"><%= article ? article.content : '' %></textarea>
+        <!-- Gizli input - Quill məzmunu buraya yazılacaq -->
+        <input type="hidden" name="content" id="hiddenContent" value="">
+        <!-- Quill editor -->
+        <div id="quillEditor"></div>
       </div>
       <div class="form-group">
         <label>🎬 YouTube Linki (istəyə bağlı)</label>
@@ -66,10 +66,12 @@
     </form>
   </main>
 </div>
+
 <!-- Quill Editor JS -->
 <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
 <script>
-  const quill = new Quill('#quillEditor', {
+  // Quill editorunu işə sal
+  var quill = new Quill('#quillEditor', {
     theme: 'snow',
     placeholder: 'Məqalə mətnini buraya yazın...',
     modules: {
@@ -86,14 +88,30 @@
     }
   });
 
-  // Redaktə zamanı mövcud HTML-i Quill-ə yüklə
+  // Mövcud məqalə redaktə edilərkən məzmunu Quill-ə yüklə
   <% if (article && article.content) { %>
-  quill.root.innerHTML = <%- JSON.stringify(article.content) %>;
+  try {
+    quill.root.innerHTML = <%- JSON.stringify(article.content) %>;
+  } catch(e) {
+    console.error('Quill load error:', e);
+  }
   <% } %>
 
-  // Form göndərilməzdən əvvəl Quill məzmununu gizli textarea-ya köçür
-  document.getElementById('articleForm').addEventListener('submit', function() {
+  // Quill dəyişdikcə hidden input-u dərhal yenilə
+  quill.on('text-change', function() {
     document.getElementById('hiddenContent').value = quill.root.innerHTML;
+  });
+
+  // Form göndərilməzdən əvvəl son dəfə yenilə
+  document.getElementById('articleForm').addEventListener('submit', function(e) {
+    var content = quill.root.innerHTML;
+    // Boş editor yoxlaması
+    if (content === '<p><br></p>' || content.trim() === '') {
+      content = '';
+    }
+    document.getElementById('hiddenContent').value = content;
+    // Dəyərin yazıldığını yoxla
+    console.log('Göndərilən məzmun uzunluğu:', content.length);
   });
 </script>
 </body>
