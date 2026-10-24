@@ -4,6 +4,14 @@
   <meta charset="UTF-8">
   <title><%= article ? 'Məqaləni Redaktə Et' : 'Yeni Məqalə' %> - Admin</title>
   <link rel="stylesheet" href="/css/style.css">
+  <!-- Quill Editor CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
+  <style>
+    .ql-container { font-size: 15px; min-height: 220px; }
+    .ql-editor { min-height: 220px; }
+    .ql-toolbar { border-radius: 6px 6px 0 0; }
+    .ql-container { border-radius: 0 0 6px 6px; }
+  </style>
 </head>
 <body>
 <div class="admin-wrap">
@@ -27,14 +35,22 @@
     <div class="admin-header">
       <h1><%= article ? '✏️ Məqaləni Redaktə Et' : '➕ Yeni Məqalə' %></h1>
     </div>
-    <form method="POST" action="<%= article ? '/admin/articles/edit/' + article.id : '/admin/articles/new' %>" enctype="multipart/form-data" class="post-form">
+    <form id="articleForm" method="POST" action="<%= article ? '/admin/articles/edit/' + article.id : '/admin/articles/new' %>" enctype="multipart/form-data" class="post-form">
       <div class="form-group">
         <label>Başlıq</label>
         <input type="text" name="title" value="<%= article ? article.title : '' %>" required>
       </div>
       <div class="form-group">
         <label>Mətn</label>
-        <textarea name="content" rows="12" required><%= article ? article.content : '' %></textarea>
+        <!-- Quill editor görünəcək bu div-də -->
+        <div id="quillEditor"><%= article ? article.content : '' %></div>
+        <!-- Gizli textarea formla göndəriləcək -->
+        <textarea name="content" id="hiddenContent" style="display:none;"><%= article ? article.content : '' %></textarea>
+      </div>
+      <div class="form-group">
+        <label>🎬 YouTube Linki (istəyə bağlı)</label>
+        <input type="text" name="youtube_url" value="<%= article && article.youtube_url ? article.youtube_url : '' %>" placeholder="https://www.youtube.com/watch?v=...">
+        <small style="color:#888">Tam YouTube linkini yapışdırın. Video məqalə səhifəsində göstəriləcək.</small>
       </div>
       <div class="form-group">
         <label>Şəkil</label>
@@ -50,5 +66,35 @@
     </form>
   </main>
 </div>
+<!-- Quill Editor JS -->
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+<script>
+  const quill = new Quill('#quillEditor', {
+    theme: 'snow',
+    placeholder: 'Məqalə mətnini buraya yazın...',
+    modules: {
+      toolbar: [
+        [{ 'header': [1, 2, 3, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ 'color': [] }, { 'background': [] }],
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        [{ 'align': [] }],
+        ['blockquote'],
+        ['link'],
+        ['clean']
+      ]
+    }
+  });
+
+  // Redaktə zamanı mövcud HTML-i Quill-ə yüklə
+  <% if (article && article.content) { %>
+  quill.root.innerHTML = <%- JSON.stringify(article.content) %>;
+  <% } %>
+
+  // Form göndərilməzdən əvvəl Quill məzmununu gizli textarea-ya köçür
+  document.getElementById('articleForm').addEventListener('submit', function() {
+    document.getElementById('hiddenContent').value = quill.root.innerHTML;
+  });
+</script>
 </body>
 </html>

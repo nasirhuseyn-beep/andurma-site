@@ -69,6 +69,7 @@ async function initDatabase() {
     await pool.query(`CREATE TABLE IF NOT EXISTS places (id SERIAL PRIMARY KEY, title TEXT, description TEXT, image TEXT, location TEXT, map_link TEXT, youtube_link TEXT, views INTEGER DEFAULT 0, likes INTEGER DEFAULT 0, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`);
     await pool.query(`ALTER TABLE places ADD COLUMN IF NOT EXISTS youtube_link TEXT`);
     await pool.query(`ALTER TABLE places ADD COLUMN IF NOT EXISTS likes INTEGER DEFAULT 0`);
+    await pool.query(`ALTER TABLE articles ADD COLUMN IF NOT EXISTS youtube_url TEXT`);
 
     const defaultSettings = [
       ['site_name', 'Andurma Kəndi'],
