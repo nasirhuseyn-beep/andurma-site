@@ -107,6 +107,11 @@ async function initDatabase() {
   }
 }
 
+// ---------- MİQRASİYA ----------
+// Vercel-də də işləməlidir: əks halda yeni sütunlar (məs. articles.youtube_url)
+// bazada yaranmır və INSERT səssizcə uğursuz olur.
+const dbReady = initDatabase();
+
 // ---------- MIDDLEWARE ----------
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -134,12 +139,15 @@ app.use((req, res, next) => {
   });
 });
 
+// Miqrasiya bitməmiş heç bir sorğu emal olunmur (Vercel cold start daxil)
+app.use((req, res, next) => dbReady.then(() => next(), () => next()));
+
 app.use('/', require('./routes/public')(db));
 app.use('/admin', require('./routes/admin')(db));
 
 const PORT = process.env.PORT || 3000;
 if (!process.env.VERCEL) {
-  initDatabase().then(() => {
+  dbReady.then(() => {
     app.listen(PORT, () => {
       console.log('=================================');
       console.log('✅ Andurma saytı işləyir: http://localhost:' + PORT);

@@ -184,10 +184,25 @@ module.exports = (db) => {
   router.get('/articles/new', requireAuth, (req, res) => { res.render('admin/article-form', { article: null }); });
   router.post('/articles/new', requireAuth, upload.single('image'), async (req, res) => {
     const { title, content, youtube_url } = req.body;
-    const image = req.file ? await uploadToSupabase(req.supabase, req.file, 'articles') : null;
-    db.run('INSERT INTO articles (title, content, image, youtube_url, author_id, author_name) VALUES (?, ?, ?, ?, ?, ?)',
-      [title, content, image, youtube_url || null, req.session.user.id, req.session.user.full_name || req.session.user.username],
-      () => res.redirect('/admin/articles'));
+    const back = (msg) => res.status(500).render('admin/article-form', {
+      article: { id: null, title, content, youtube_url, image: null }, error: msg
+    });
+    if (!title || !title.trim()) return back('Başlıq boş ola bilməz.');
+    try {
+      const image = req.file ? await uploadToSupabase(req.supabase, req.file, 'articles') : null;
+      db.run('INSERT INTO articles (title, content, image, youtube_url, author_id, author_name) VALUES (?, ?, ?, ?, ?, ?)',
+        [title, content, image, youtube_url || null, req.session.user.id, req.session.user.full_name || req.session.user.username],
+        (err) => {
+          if (err) {
+            console.error('Article INSERT xətası:', err.message);
+            return back('Məqalə yazılmadı: ' + err.message);
+          }
+          res.redirect('/admin/articles');
+        });
+    } catch (e) {
+      console.error('Article save xətası:', e.message);
+      return back('Xəta: ' + e.message);
+    }
   });
   router.get('/articles/edit/:id', requireAuth, (req, res) => {
     db.get('SELECT * FROM articles WHERE id = ?', [req.params.id], (err, article) => {
@@ -201,8 +216,19 @@ module.exports = (db) => {
     db.get('SELECT * FROM articles WHERE id = ?', [req.params.id], async (err, old) => {
       if (!old) return res.redirect('/admin/articles');
       if (req.session.user.role !== 'super_admin' && old.author_id !== req.session.user.id) return res.status(403).send('Icaze yoxdur');
-      const image = req.file ? await uploadToSupabase(req.supabase, req.file, 'articles') : old.image;
-      db.run('UPDATE articles SET title=?, content=?, image=?, youtube_url=? WHERE id=?', [title, content, image, youtube_url || null, req.params.id], () => res.redirect('/admin/articles'));
+      try {
+        const image = req.file ? await uploadToSupabase(req.supabase, req.file, 'articles') : old.image;
+        db.run('UPDATE articles SET title=?, content=?, image=?, youtube_url=? WHERE id=?', [title, content, image, youtube_url || null, req.params.id], (err2) => {
+          if (err2) {
+            console.error('Article UPDATE xətası:', err2.message);
+            return res.status(500).render('admin/article-form', { article: { ...old, title, content, youtube_url }, error: 'Yenilənmədi: ' + err2.message });
+          }
+          res.redirect('/admin/articles');
+        });
+      } catch (e) {
+        console.error('Article update xətası:', e.message);
+        return res.status(500).render('admin/article-form', { article: { ...old, title, content, youtube_url }, error: 'Xəta: ' + e.message });
+      }
     });
   });
   router.post('/articles/delete/:id', requireAuth, (req, res) => {

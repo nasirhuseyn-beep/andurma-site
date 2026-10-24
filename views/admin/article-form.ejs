@@ -2,7 +2,7 @@
 <html lang="az">
 <head>
   <meta charset="UTF-8">
-  <title><%= article ? 'Məqaləni Redaktə Et' : 'Yeni Məqalə' %> - Admin</title>
+  <title><%= article && article.id ? 'Məqaləni Redaktə Et' : 'Yeni Məqalə' %> - Admin</title>
   <link rel="stylesheet" href="/css/style.css">
   <!-- Quill Editor CSS -->
   <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
@@ -33,9 +33,14 @@
   </aside>
   <main class="admin-main">
     <div class="admin-header">
-      <h1><%= article ? '✏️ Məqaləni Redaktə Et' : '➕ Yeni Məqalə' %></h1>
+      <h1><%= article && article.id ? '✏️ Məqaləni Redaktə Et' : '➕ Yeni Məqalə' %></h1>
     </div>
-    <form id="articleForm" method="POST" action="<%= article ? '/admin/articles/edit/' + article.id : '/admin/articles/new' %>" enctype="multipart/form-data" class="post-form">
+    <% if (typeof error !== 'undefined' && error) { %>
+    <div class="alert-error" style="background:#fdecea;color:#b3261e;border:1px solid #f5c6c3;padding:12px 16px;border-radius:8px;margin-bottom:16px;">
+      ⚠️ <%= error %>
+    </div>
+    <% } %>
+    <form id="articleForm" method="POST" action="<%= article && article.id ? '/admin/articles/edit/' + article.id : '/admin/articles/new' %>" enctype="multipart/form-data" class="post-form">
       <div class="form-group">
         <label>Başlıq</label>
         <input type="text" name="title" value="<%= article ? article.title : '' %>" required>
@@ -91,7 +96,7 @@
   // Mövcud məqalə redaktə edilərkən məzmunu Quill-ə yüklə
   <% if (article && article.content) { %>
   try {
-    quill.root.innerHTML = <%- JSON.stringify(article.content) %>;
+    quill.root.innerHTML = <%- JSON.stringify(article.content).replace(/</g, '\\u003c') %>;
   } catch(e) {
     console.error('Quill load error:', e);
   }
